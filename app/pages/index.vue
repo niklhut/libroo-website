@@ -89,7 +89,7 @@ useSeoMeta({
           <UColorModeImage
             light="/images/light/line-2.svg"
             dark="/images/dark/line-2.svg"
-            class="absolute top-0 right-0 size-full transform scale-95 translate-x-[70%]"
+            class="absolute top-0 right-0 size-full transform scale-95 @min-[1020px]:translate-x-[90%] @min-[1180px]:translate-x-[80%]"
           />
         </div>
       </template>
