@@ -25,8 +25,8 @@ section:
   title: '[Take control]{.text-primary} of your bookshelf'
   description: Libroo brings clarity to your reading life. Whether you lend books to friends or simply want to track what’s on your shelves, it’s designed to stay out of your way and do the job.
   images:
-    mobile: '/images/book-stack-mobile.svg'
-    desktop: '/images/book-stack-desktop.svg'
+    mobile: '/images/bookshelves.svg'
+    desktop: '/images/bookshelves.svg'
   features:
     - title: Track your library
       description: Add and organize all your books with metadata pulled from Open Library. Keep your digital shelf in sync with your real one.

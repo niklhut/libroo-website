@@ -43,7 +43,7 @@ useSeoMeta({
       :features="page.section.features"
       orientation="horizontal"
       :ui="{
-        container: 'lg:px-4 2xl:px-20 mx-0 max-w-none md:mr-10',
+        container: 'lg:px-10 2xl:px-20 mx-0 max-w-none md:mr-10',
         features: 'gap-0'
       }"
       reverse
@@ -62,7 +62,7 @@ useSeoMeta({
       <img
         :src="page.section.images.mobile"
         :alt="page.section.title"
-        class="block lg:hidden 2xl:block 2xl:w-full 2xl:max-w-2xl"
+        class="block lg:hidden 2xl:block 2xl:w-full 2xl:max-w-2xl max-h-[350px]"
       >
     </UPageSection>
 
