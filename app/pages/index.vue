@@ -98,6 +98,7 @@ useSeoMeta({
     <USeparator :ui="{ border: 'border-primary/30' }" />
 
     <UPageCTA
+      id="notify"
       v-bind="page.cta"
       variant="naked"
       class="overflow-hidden @container"

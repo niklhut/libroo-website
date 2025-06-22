@@ -7,20 +7,15 @@ const items = computed(() => [{
   to: '#features',
   active: activeHeadings.value.includes('features') && !activeHeadings.value.includes('pricing')
 }, {
-  label: 'Pricing',
-  to: '#pricing',
-  active: activeHeadings.value.includes('pricing')
-}, {
-  label: 'Testimonials',
-  to: '#testimonials',
-  active: activeHeadings.value.includes('testimonials') && !activeHeadings.value.includes('pricing')
+  label: 'Notify Me',
+  to: '#notify',
+  active: activeHeadings.value.includes('notify')
 }])
 
 nuxtApp.hooks.hookOnce('page:finish', () => {
   updateHeadings([
     document.querySelector('#features'),
-    document.querySelector('#pricing'),
-    document.querySelector('#testimonials')
+    document.querySelector('#notify')
   ].filter(Boolean) as Element[])
 })
 </script>
@@ -29,22 +24,19 @@ nuxtApp.hooks.hookOnce('page:finish', () => {
   <UHeader>
     <template #left>
       <NuxtLink to="/">
-        <LogoPro class="w-auto h-6 shrink-0" />
+        <NuxtImg
+          src="/Libroo_Icon_Text.png"
+          alt="Libroo"
+          class="w-32"
+          width="128"
+        />
       </NuxtLink>
-
-      <TemplateMenu />
     </template>
 
     <template #right>
       <UNavigationMenu
         :items="items"
         variant="link"
-        class="hidden lg:block"
-      />
-
-      <UButton
-        label="Download App"
-        variant="subtle"
         class="hidden lg:block"
       />
 

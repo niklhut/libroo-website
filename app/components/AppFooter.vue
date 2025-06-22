@@ -51,7 +51,10 @@ function onSubmit() {
 
 <template>
   <USeparator
-    icon="i-simple-icons-nuxtdotjs"
+    :avatar="{
+      src: '/favicon-96x96.png',
+      alt: 'Logo'
+    }"
     class="h-px"
   />
 
