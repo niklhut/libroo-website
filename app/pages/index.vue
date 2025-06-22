@@ -43,7 +43,7 @@ useSeoMeta({
       :features="page.section.features"
       orientation="horizontal"
       :ui="{
-        container: 'lg:px-0 2xl:px-20 mx-0 max-w-none md:mr-10',
+        container: 'lg:px-4 2xl:px-20 mx-0 max-w-none md:mr-10',
         features: 'gap-0'
       }"
       reverse
@@ -97,7 +97,7 @@ useSeoMeta({
 
     <USeparator :ui="{ border: 'border-primary/30' }" />
 
-    <UPageSection
+    <!-- <UPageSection
       id="steps"
       :description="page.steps.description"
       class="relative overflow-hidden"
@@ -138,9 +138,9 @@ useSeoMeta({
           </div>
         </UPageCard>
       </template>
-    </UPageSection>
+    </UPageSection> -->
 
-    <UPageSection
+    <!-- <UPageSection
       id="pricing"
       class="mb-32 overflow-hidden"
       :title="page.pricing.title"
@@ -213,7 +213,7 @@ useSeoMeta({
           </UPageCard>
         </UPageColumns>
       </UContainer>
-    </UPageSection>
+    </UPageSection> -->
 
     <USeparator />
 

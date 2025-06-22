@@ -6,3 +6,31 @@
 @theme {
   --font-sans: 'Public Sans', sans-serif;
 }
+
+:root {
+  --color-royal-blue-50: #f2f5fc;
+  --color-royal-blue-100: #e1e8f8;
+  --color-royal-blue-200: #cbd8f2;
+  --color-royal-blue-300: #a6bfea;
+  --color-royal-blue-400: #7c9dde;
+  --color-royal-blue-500: #5d7dd4;
+  --color-royal-blue-600: #4963c7;
+  --color-royal-blue-700: #3f51b5;
+  --color-royal-blue-800: #394494;
+  --color-royal-blue-900: #323d76;
+  --color-royal-blue-950: #222749;
+}
+
+.dark {
+  --color-royal-blue-50: #ecf3ff;
+  --color-royal-blue-100: #dde9ff;
+  --color-royal-blue-200: #c2d7ff;
+  --color-royal-blue-300: #9dbcff;
+  --color-royal-blue-400: #7695ff;
+  --color-royal-blue-500: #536dfe;
+  --color-royal-blue-600: #3745f4;
+  --color-royal-blue-700: #2b35d7;
+  --color-royal-blue-800: #252eae;
+  --color-royal-blue-900: #262f89;
+  --color-royal-blue-950: #171b4f;
+}
