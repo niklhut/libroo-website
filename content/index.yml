@@ -61,26 +61,6 @@ features:
       description: Uses Nuxt 3, Drizzle ORM, Postgres, and Vue 3 — production-grade from day one.
       icon: i-lucide-cpu
 
-# steps:
-#   title: Get started in [3 steps]{.text-primary}
-#   description: You can set up and run Libroo locally in minutes.
-#   items:
-#     - title: Clone the repo
-#       description: Get the source on GitHub and run it locally with Nuxt and Docker.
-#       image:
-#         light: '/images/light/clone.svg'
-#         dark: '/images/dark/clone.svg'
-#     - title: Add your books
-#       description: Use the Open Library search to import titles or enter details manually.
-#       image:
-#         light: '/images/light/add.svg'
-#         dark: '/images/dark/add.svg'
-#     - title: Track loans & collections
-#       description: Organize your library and lend with confidence.
-#       image:
-#         light: '/images/light/track.svg'
-#         dark: '/images/dark/track.svg'
-
 cta:
   title: Want to try Libroo when it's ready?
   description: Enter your email and be the first to know when Libroo is available.
