@@ -40,7 +40,7 @@ nuxtApp.hooks.hookOnce('page:finish', () => {
         class="hidden lg:block"
       />
 
-      <UColorModeButton />
+      <CustomColorModeButton />
     </template>
 
     <template #body>
