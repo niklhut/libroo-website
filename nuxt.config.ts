@@ -6,8 +6,15 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/image',
     '@nuxt/ui-pro',
-    '@nuxt/content'
+    '@nuxt/content',
+    '@nuxtjs/turnstile'
   ],
+
+  imports: {
+    dirs: [
+      'shared/schema/*'
+    ]
+  },
 
   devtools: {
     enabled: true
@@ -37,7 +44,8 @@ export default defineNuxtConfig({
     },
     imports: {
       dirs: [
-        'server/db/*'
+        'server/db/*',
+        'shared/schema/*'
       ]
     },
     prerender: {
