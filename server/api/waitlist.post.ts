@@ -13,7 +13,8 @@ export default defineEventHandler(async (event) => {
   const existing = await db.select().from(waitlist).where(eq(waitlist.email, body.email)).get()
 
   if (existing) {
-    return sendError(event, createError({ statusCode: 409, message: 'Email already in waitlist' }))
+    // Return success to avoid someone to read the database
+    return { success: true }
   }
 
   try {
