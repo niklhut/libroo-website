@@ -37,7 +37,7 @@ const items = [
         icon="simple-icons:github"
         variant="link"
         color="neutral"
-        to="https://github.com/niklhut"
+        to="https://github.com/niklhut/libroo"
         target="_blank"
       />
     </template>
