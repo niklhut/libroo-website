@@ -120,6 +120,20 @@ useSeoMeta({
         </div>
       </template>
 
+      <template #links>
+        <WaitlistModal
+          :title="page.waitlistModal.title"
+          :description="page.waitlistModal.description"
+        >
+          <UButton
+            :icon="page.cta.links[0]!.icon"
+            :variant="page.cta.links[0]!.variant"
+            :label="page.cta.links[0]!.label"
+            :size="page.cta.links[0]!.size"
+          />
+        </WaitlistModal>
+      </template>
+
       <div class="absolute rounded-full dark:bg-primary blur-[250px] size-40 sm:size-50 transform -translate-x-1/2 left-1/2 -translate-y-80" />
 
       <LazyStarsBg />

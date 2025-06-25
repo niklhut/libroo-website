@@ -68,4 +68,9 @@ cta:
     - label: Notify Me
       to: '#notify'
       icon: i-lucide-mail
-      variant: outline
+      variant: subtle
+      size: xl
+
+waitlistModal:
+  title: Want to try Libroo when it's ready?
+  description: Enter your email and be the first to know when Libroo is available. We won't spam you, we promise.

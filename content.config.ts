@@ -86,7 +86,8 @@ export const collections = {
       }),
       cta: createBaseSchema().extend({
         links: z.array(createLinkSchema())
-      })
+      }),
+      waitlistModal: createBaseSchema()
     })
   })
 }
