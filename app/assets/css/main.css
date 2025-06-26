@@ -34,3 +34,7 @@
   --color-royal-blue-900: #262f89;
   --color-royal-blue-950: #171b4f;
 }
+
+html {
+  scroll-behavior: smooth;
+}
