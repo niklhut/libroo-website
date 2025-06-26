@@ -36,6 +36,15 @@ useSeoMeta({
           class="*:leading-11 sm:*:leading-19 max-w-3xl mx-auto"
         />
       </template>
+
+      <template #links>
+        <UButton
+          v-for="(link, index) in page.hero.links"
+          :key="index"
+          v-bind="link"
+          @click="umTrackEvent('hero', { action: link.label })"
+        />
+      </template>
     </UPageHero>
 
     <UPageSection
