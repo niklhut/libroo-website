@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/ui-pro',
     '@nuxt/content',
-    '@nuxtjs/turnstile'
+    '@nuxtjs/turnstile',
+    'nuxt-umami'
   ],
 
   imports: {
@@ -71,5 +72,14 @@ export default defineNuxtConfig({
   turnstile: {
     siteKey: '1x00000000000000000000AA',
     secretKey: '3x0000000000000000000000000000000AA'
+  },
+
+  umami: {
+    autoTrack: true,
+    useDirective: true,
+    urlOptions: {
+      trailingSlash: 'never'
+    },
+    ignoreLocalhost: true
   }
 })

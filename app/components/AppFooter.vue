@@ -2,11 +2,13 @@
 const items = [
   {
     label: 'Imprint',
-    to: 'https://niklhut.com/imprint'
+    to: 'https://niklhut.com/imprint',
+    onclick: () => umTrackEvent('footer', { action: 'imprint' })
   },
   {
     label: 'Privacy Policy',
-    to: 'https://niklhut.com/privacy'
+    to: 'https://niklhut.com/privacy',
+    onclick: () => umTrackEvent('footer', { action: 'privacy' })
   }
 ]
 </script>
@@ -39,6 +41,7 @@ const items = [
         color="neutral"
         to="https://github.com/niklhut/libroo"
         target="_blank"
+        @click="umTrackEvent('footer', { action: 'github' })"
       />
     </template>
   </UFooter>

@@ -23,6 +23,10 @@ const onSubmit = async () => {
     })
 
     if (data?.success) {
+      umTrackEvent('join_waitlist', {
+        email: state.email,
+        success: true
+      })
       toast.add({
         title: 'Success',
         description: 'You have been added to the waitlist!',
@@ -31,12 +35,22 @@ const onSubmit = async () => {
     }
   } catch (error) {
     if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 403) {
+      umTrackEvent('join_waitlist', {
+        email: state.email,
+        success: false,
+        reason: 'captcha_failed'
+      })
       toast.add({
         title: 'Captcha failed',
         description: 'Please try again',
         color: 'error'
       })
     } else {
+      umTrackEvent('join_waitlist', {
+        email: state.email,
+        success: false,
+        reason: 'unknown'
+      })
       toast.add({
         title: 'Error',
         description: 'Something went wrong',
