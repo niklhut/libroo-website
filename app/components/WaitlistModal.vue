@@ -17,31 +17,38 @@ const state = reactive({
 
 const onSubmit = async () => {
   try {
-    const { data } = await useFetch('/api/waitlist', {
+    const data = await $fetch('/api/waitlist', {
       method: 'POST',
       body: state
     })
 
-    if (data.value?.success) {
+    if (data?.success) {
       toast.add({
         title: 'Success',
         description: 'You have been added to the waitlist!',
         color: 'success'
       })
-
-      state.email = ''
-      state.token = ''
-
-      isOpen.value = false
     }
   } catch (error) {
-    console.log(error)
-    toast.add({
-      title: 'Error',
-      description: 'Something went wrong',
-      color: 'error'
-    })
+    if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 403) {
+      toast.add({
+        title: 'Captcha failed',
+        description: 'Please try again',
+        color: 'error'
+      })
+    } else {
+      toast.add({
+        title: 'Error',
+        description: 'Something went wrong',
+        color: 'error'
+      })
+    }
   }
+
+  state.email = ''
+  state.token = ''
+
+  isOpen.value = false
 }
 </script>
 
