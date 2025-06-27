@@ -70,6 +70,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
+          build-args: |
+            NUXT_UI_PRO_LICENSE=${{ secrets.NUXT_UI_PRO_LICENSE }}
 
       - name: Output image digest
         run: echo ${{ steps.build.outputs.digest }}

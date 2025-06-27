@@ -3,6 +3,11 @@
 # ================================
 FROM node:23-alpine AS build
 
+# Accept build argument
+ARG NUXT_UI_PRO_LICENSE
+# Make it available as environment variable
+ENV NUXT_UI_PRO_LICENSE=$NUXT_UI_PRO_LICENSE
+
 # Set the working directory
 WORKDIR /build
 
