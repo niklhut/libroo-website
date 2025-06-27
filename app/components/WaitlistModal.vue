@@ -38,7 +38,7 @@ const onSubmit = async () => {
       umTrackEvent('join_waitlist', {
         email: state.email,
         success: false,
-        reason: 'captcha_failed'
+        reason: 'api_denied_captcha'
       })
       toast.add({
         title: 'Captcha failed',
@@ -91,7 +91,32 @@ const onSubmit = async () => {
           />
         </UFormField>
 
-        <NuxtTurnstile v-model="state.token" />
+        <NuxtTurnstile
+          v-model="state.token"
+          :options="{
+            'error-callback': () => {
+              umTrackEvent('join_waitlist', {
+                email: state.email,
+                success: false,
+                reason: 'turnstile_error'
+              })
+            },
+            'expired-callback': () => {
+              umTrackEvent('join_waitlist', {
+                email: state.email,
+                success: false,
+                reason: 'turnstile_expired'
+              })
+            },
+            'timeout-callback': () => {
+              umTrackEvent('join_waitlist', {
+                email: state.email,
+                success: false,
+                reason: 'turnstile_timeout'
+              })
+            }
+          }"
+        />
 
         <UButton
           type="submit"
