@@ -29,3 +29,7 @@ cd libroo-website
 pnpm install
 pnpm dev
 ```
+
+📜 License
+
+This project is licensed under the MIT License. See [LICENSE](/LICENSE) for details.
