@@ -4,6 +4,11 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
+defineOgImageComponent('OgImage', {
+  title: page.value.seo?.title || page.value.title,
+  description: page.value.seo?.description || page.value.description
+})
+
 useSeoMeta({
   title: page.value.seo?.title || page.value.title,
   ogTitle: page.value.seo?.title || page.value.title,

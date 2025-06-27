@@ -8,7 +8,8 @@ export default defineNuxtConfig({
     '@nuxt/ui-pro',
     '@nuxt/content',
     '@nuxtjs/turnstile',
-    'nuxt-umami'
+    'nuxt-umami',
+    '@nuxtjs/seo'
   ],
 
   imports: {
@@ -22,6 +23,12 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/css/main.css'],
+
+  site: {
+    name: 'Libroo',
+    description: 'Libroo helps you track books you own, manage collections, and keep tabs on loans — all in one simple, open source app.',
+    logo: '/favicon-96x96.png'
+  },
 
   mdc: {
     highlight: {
