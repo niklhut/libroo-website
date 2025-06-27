@@ -76,6 +76,19 @@ export default defineNuxtConfig({
     }
   },
 
+  seo: {
+    meta: {
+      themeColor: [
+        { content: '#3f51b5', media: '(prefers-color-scheme: light)' },
+        { content: '#536dfe', media: '(prefers-color-scheme: dark)' }
+      ],
+      twitterCreator: '@niklhut',
+      author: 'Niklas Huthmann',
+      colorScheme: 'dark light',
+      applicationName: 'Libroo'
+    }
+  },
+
   turnstile: {
     siteKey: '1x00000000000000000000AA',
     secretKey: '3x0000000000000000000000000000000AA'
