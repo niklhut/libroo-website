@@ -1,4 +1,4 @@
-import { migrate } from 'drizzle-orm/libsql/migrator'
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 
 export default defineTask({
   meta: {

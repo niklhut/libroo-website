@@ -37,7 +37,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    dbFileName: 'file:local.db'
+    dbFileName: 'local.db'
   },
 
   future: {

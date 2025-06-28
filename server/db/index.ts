@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { drizzle } from 'drizzle-orm/libsql'
+import { drizzle } from 'drizzle-orm/better-sqlite3'
 import * as schema from './schema'
 
 let dbFileName: string
@@ -16,6 +16,6 @@ if (!dbFileName) {
 }
 
 // You can specify any property from the libsql connection options
-const db = drizzle({ connection: { url: dbFileName }, schema })
+const db = drizzle({ connection: { source: dbFileName }, schema })
 
 export default db

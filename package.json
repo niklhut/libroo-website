@@ -14,7 +14,6 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.52",
     "@iconify-json/simple-icons": "^1.2.40",
-    "@libsql/client": "^0.15.9",
     "@nuxt/content": "^3.6.1",
     "@nuxt/image": "^1.10.0",
     "@nuxt/scripts": "^0.11.8",
@@ -30,6 +29,7 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.4.1",
+    "@types/better-sqlite3": "^7.6.13",
     "drizzle-kit": "^0.31.2",
     "eslint": "^9.29.0",
     "tsx": "^4.20.3",
