@@ -49,6 +49,9 @@ WORKDIR /app
 # Copy the built files from the build image
 COPY --chown=nuxtuser:nuxtuser --from=build /build/.output ./
 
+# Change ownership of data dir
+RUN mkdir /app/data && chmod -R 755 /app/data
+
 # Expose 8080 on the container
 EXPOSE 8080
 
