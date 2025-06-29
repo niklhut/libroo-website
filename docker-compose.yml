@@ -1,0 +1,26 @@
+services:
+  libroo:
+    image: 'ghcr.io/niklhut/libroo-website'
+    restart: unless-stopped
+    volumes:
+      - 'sqlite_data:/app/data'
+    environment:
+      - 'NUXT_DB_FILE_NAME=${NUXT_DB_FILE_NAME:-data/local.db}'
+      - 'NUXT_TURNSTILE_SECRET_KEY=${NUXT_TURNSTILE_SECRET_KEY}'
+      - 'NUXT_PUBLIC_TURNSTILE_SITE_KEY=${NUXT_PUBLIC_TURNSTILE_SITE_KEY}'
+      - 'NUXT_PUBLIC_UMAMI_HOST=${NUXT_PUBLIC_UMAMI_HOST}'
+      - 'NUXT_PUBLIC_UMAMI_ID=${NUXT_PUBLIC_UMAMI_ID}'
+      - 'NUXT_SITE_URL=${SERVICE_FQDN_LIBROO}'
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - '-q'
+        - '-O-'
+        - 'http://0.0.0.0:8080'
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  sqlite_data:
