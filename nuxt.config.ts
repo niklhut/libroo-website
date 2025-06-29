@@ -97,6 +97,7 @@ export default defineNuxtConfig({
   umami: {
     autoTrack: true,
     useDirective: true,
+    proxy: 'cloak',
     urlOptions: {
       trailingSlash: 'never'
     },
