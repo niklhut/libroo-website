@@ -37,7 +37,15 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    dbFileName: 'local.db'
+    dbFileName: process.env.NUXT_DB_FILE_NAME || 'local.db',
+    turnstileSecretKey: process.env.NUXT_TURNSTILE_SECRET_KEY,
+    umamiHost: process.env.NUXT_UMAMI_HOST,
+    umamiId: process.env.NUXT_UMAMI_ID,
+
+    public: {
+      turnstileSiteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY,
+      siteUrl: process.env.NUXT_SITE_URL
+    }
   },
 
   future: {
@@ -90,11 +98,13 @@ export default defineNuxtConfig({
   },
 
   turnstile: {
-    siteKey: '1x00000000000000000000AA',
-    secretKey: '1x0000000000000000000000000000000AA'
+    siteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA',
+    secretKey: process.env.NUXT_TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA'
   },
 
   umami: {
+    host: process.env.NUXT_UMAMI_HOST,
+    id: process.env.NUXT_UMAMI_ID,
     autoTrack: true,
     useDirective: true,
     proxy: 'cloak',
