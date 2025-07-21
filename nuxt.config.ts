@@ -40,10 +40,6 @@ export default defineNuxtConfig({
     dbFileName: process.env.NUXT_DB_FILE_NAME || 'local.db'
   },
 
-  future: {
-    compatibilityVersion: 4
-  },
-
   compatibilityDate: '2025-01-15',
 
   nitro: {
