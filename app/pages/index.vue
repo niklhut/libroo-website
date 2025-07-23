@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import WaitlistModal from '~/components/WaitlistModal.vue'
+
 const { data: page } = await useAsyncData('index', () => queryCollection('content').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
@@ -16,7 +18,16 @@ useSeoMeta({
   ogDescription: page.value.seo?.description || page.value.description
 })
 
+const overlay = useOverlay()
+const modal = overlay.create(WaitlistModal)
+
 const handleClick = (link: { label: string }) => {
+  if (link.label === 'Notify Me') {
+    modal.open({
+      title: page.value?.waitlistModal.title ?? '',
+      description: page.value?.waitlistModal.description ?? ''
+    })
+  }
   window.umami.track('hero', { name: String(link.label) })
 }
 </script>
@@ -139,17 +150,12 @@ const handleClick = (link: { label: string }) => {
       </template>
 
       <template #links>
-        <WaitlistModal
-          :title="page.waitlistModal.title"
-          :description="page.waitlistModal.description"
-        >
-          <UButton
-            :icon="page.cta.links[0]!.icon"
-            :variant="page.cta.links[0]!.variant"
-            :label="page.cta.links[0]!.label"
-            :size="page.cta.links[0]!.size"
-          />
-        </WaitlistModal>
+        <UButton
+          v-for="(link, index) in page.cta.links"
+          :key="index"
+          v-bind="link"
+          @click="handleClick(link)"
+        />
       </template>
 
       <div class="absolute rounded-full dark:bg-primary blur-[250px] size-40 sm:size-50 transform -translate-x-1/2 left-1/2 -translate-y-80" />

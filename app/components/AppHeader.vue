@@ -6,10 +6,6 @@ const items = computed(() => [{
   label: 'Features',
   to: '#features',
   active: activeHeadings.value.includes('features') && !activeHeadings.value.includes('pricing')
-}, {
-  label: 'Notify Me',
-  to: '#notify',
-  active: activeHeadings.value.includes('notify')
 }])
 
 nuxtApp.hooks.hookOnce('page:finish', () => {

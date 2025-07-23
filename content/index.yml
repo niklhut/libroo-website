@@ -19,7 +19,6 @@ hero:
       trailing: true
       variant: subtle
       size: xl
-      to: '#notify'
 
 section:
   title: '[Take control]{.text-primary} of your bookshelf'

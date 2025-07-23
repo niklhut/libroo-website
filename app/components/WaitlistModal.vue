@@ -10,6 +10,8 @@ const { title, description } = defineProps<{
   description: string
 }>()
 
+const emit = defineEmits<{ close: [] }>()
+
 const state = reactive({
   email: '',
   token: ''
@@ -62,7 +64,7 @@ const onSubmit = async () => {
   state.email = ''
   state.token = ''
 
-  isOpen.value = false
+  emit('close')
 }
 
 const nuxtTurnstileOptions = {
@@ -96,8 +98,6 @@ const nuxtTurnstileOptions = {
     :title="title"
     :description="description"
   >
-    <slot />
-
     <template #body>
       <UForm
         :schema="WaitlistSchema"
