@@ -3,14 +3,18 @@ const items = [
   {
     label: 'Imprint',
     to: 'https://niklhut.com/imprint',
-    onclick: () => umTrackEvent('footer', { action: 'imprint' })
+    onclick: () => window.umami.track('footer', { action: 'imprint' })
   },
   {
     label: 'Privacy Policy',
     to: 'https://niklhut.com/privacy',
-    onclick: () => umTrackEvent('footer', { action: 'privacy' })
+    onclick: () => window.umami.track('footer', { action: 'privacy' })
   }
 ]
+
+function onClick() {
+  window.umami.track('footer', { action: 'github' })
+}
 </script>
 
 <template>
@@ -41,7 +45,7 @@ const items = [
         color="neutral"
         to="https://github.com/niklhut/libroo"
         target="_blank"
-        @click="umTrackEvent('footer', { action: 'github' })"
+        @click="onClick"
       />
     </template>
   </UFooter>
