@@ -23,7 +23,7 @@ const onSubmit = async () => {
     })
 
     if (data?.success) {
-      umTrackEvent('join_waitlist', {
+      window.umami.track('join_waitlist', {
         email: state.email,
         success: true
       })
@@ -35,7 +35,7 @@ const onSubmit = async () => {
     }
   } catch (error) {
     if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 403) {
-      umTrackEvent('join_waitlist', {
+      window.umami.track('join_waitlist', {
         email: state.email,
         success: false,
         reason: 'api_denied_captcha'
@@ -46,7 +46,7 @@ const onSubmit = async () => {
         color: 'error'
       })
     } else {
-      umTrackEvent('join_waitlist', {
+      window.umami.track('join_waitlist', {
         email: state.email,
         success: false,
         reason: 'unknown'
@@ -63,6 +63,30 @@ const onSubmit = async () => {
   state.token = ''
 
   isOpen.value = false
+}
+
+const nuxtTurnstileOptions = {
+  'error-callback': () => {
+    window.umami.track('join_waitlist', {
+      email: state.email,
+      success: false,
+      reason: 'turnstile_error'
+    })
+  },
+  'expired-callback': () => {
+    window.umami.track('join_waitlist', {
+      email: state.email,
+      success: false,
+      reason: 'turnstile_expired'
+    })
+  },
+  'timeout-callback': () => {
+    window.umami.track('join_waitlist', {
+      email: state.email,
+      success: false,
+      reason: 'turnstile_timeout'
+    })
+  }
 }
 </script>
 
@@ -93,29 +117,7 @@ const onSubmit = async () => {
 
         <NuxtTurnstile
           v-model="state.token"
-          :options="{
-            'error-callback': () => {
-              umTrackEvent('join_waitlist', {
-                email: state.email,
-                success: false,
-                reason: 'turnstile_error'
-              })
-            },
-            'expired-callback': () => {
-              umTrackEvent('join_waitlist', {
-                email: state.email,
-                success: false,
-                reason: 'turnstile_expired'
-              })
-            },
-            'timeout-callback': () => {
-              umTrackEvent('join_waitlist', {
-                email: state.email,
-                success: false,
-                reason: 'turnstile_timeout'
-              })
-            }
-          }"
+          :options="nuxtTurnstileOptions"
         />
 
         <UButton

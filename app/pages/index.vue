@@ -15,6 +15,10 @@ useSeoMeta({
   description: page.value.seo?.description || page.value.description,
   ogDescription: page.value.seo?.description || page.value.description
 })
+
+const handleClick = (link: { label: string }) => {
+  window.umami.track('hero', { name: String(link.label) })
+}
 </script>
 
 <template>
@@ -47,7 +51,7 @@ useSeoMeta({
           v-for="(link, index) in page.hero.links"
           :key="index"
           v-bind="link"
-          @click="umTrackEvent('hero', { action: link.label })"
+          @click="handleClick(link)"
         />
       </template>
     </UPageHero>

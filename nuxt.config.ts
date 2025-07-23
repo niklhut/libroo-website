@@ -8,8 +8,8 @@ export default defineNuxtConfig({
     '@nuxt/ui-pro',
     '@nuxt/content',
     '@nuxtjs/turnstile',
-    'nuxt-umami',
-    '@nuxtjs/seo'
+    '@nuxtjs/seo',
+    '@nuxt/scripts'
   ],
 
   imports: {
@@ -37,7 +37,17 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    dbFileName: process.env.NUXT_DB_FILE_NAME || 'local.db'
+    dbFileName: 'local.db',
+    public: {
+      scripts: {
+        umamiAnalytics: {
+          scriptInput: {
+            src: 'https://umami.is/script.js'
+          },
+          websiteId: ''
+        }
+      }
+    }
   },
 
   compatibilityDate: '2025-01-15',
@@ -72,6 +82,12 @@ export default defineNuxtConfig({
     }
   },
 
+  scripts: {
+    registry: {
+      umamiAnalytics: true
+    }
+  },
+
   seo: {
     meta: {
       themeColor: [
@@ -88,15 +104,5 @@ export default defineNuxtConfig({
   turnstile: {
     siteKey: '1x00000000000000000000AA',
     secretKey: '1x0000000000000000000000000000000AA'
-  },
-
-  umami: {
-    autoTrack: true,
-    useDirective: true,
-    proxy: 'cloak',
-    urlOptions: {
-      trailingSlash: 'never'
-    },
-    ignoreLocalhost: true
   }
 })
