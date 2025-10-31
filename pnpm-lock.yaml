@@ -39,8 +39,8 @@ importers:
         specifier: ^12.2.0
         version: 12.2.0
       dotenv:
-        specifier: ^16.6.1
-        version: 16.6.1
+        specifier: ^17.2.3
+        version: 17.2.3
       drizzle-orm:
         specifier: ^0.44.3
         version: 0.44.3(@libsql/client@0.15.9)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.2.0)
