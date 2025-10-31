@@ -19,6 +19,7 @@ useSeoMeta({
 })
 
 const overlay = useOverlay()
+const { proxy } = useScriptUmamiAnalytics()
 const modal = overlay.create(WaitlistModal)
 
 const handleClick = (link: { label: string }) => {
@@ -28,7 +29,7 @@ const handleClick = (link: { label: string }) => {
       description: page.value?.waitlistModal.description ?? ''
     })
   }
-  window.umami.track('hero', { name: String(link.label) })
+  proxy.track('hero', { name: String(link.label) })
 }
 </script>
 

@@ -4,6 +4,7 @@ import { WaitlistSchema } from '#shared/schema/waitlist'
 const isOpen = ref(false)
 
 const toast = useToast()
+const { proxy } = useScriptUmamiAnalytics()
 
 const { title, description } = defineProps<{
   title: string
@@ -25,7 +26,7 @@ const onSubmit = async () => {
     })
 
     if (data?.success) {
-      window.umami.track('join_waitlist', {
+      proxy.track('join_waitlist', {
         email: state.email,
         success: true
       })
@@ -37,7 +38,7 @@ const onSubmit = async () => {
     }
   } catch (error) {
     if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 403) {
-      window.umami.track('join_waitlist', {
+      proxy.track('join_waitlist', {
         email: state.email,
         success: false,
         reason: 'api_denied_captcha'
@@ -48,7 +49,7 @@ const onSubmit = async () => {
         color: 'error'
       })
     } else {
-      window.umami.track('join_waitlist', {
+      proxy.track('join_waitlist', {
         email: state.email,
         success: false,
         reason: 'unknown'
@@ -69,21 +70,21 @@ const onSubmit = async () => {
 
 const nuxtTurnstileOptions = {
   'error-callback': () => {
-    window.umami.track('join_waitlist', {
+    proxy.track('join_waitlist', {
       email: state.email,
       success: false,
       reason: 'turnstile_error'
     })
   },
   'expired-callback': () => {
-    window.umami.track('join_waitlist', {
+    proxy.track('join_waitlist', {
       email: state.email,
       success: false,
       reason: 'turnstile_expired'
     })
   },
   'timeout-callback': () => {
-    window.umami.track('join_waitlist', {
+    proxy.track('join_waitlist', {
       email: state.email,
       success: false,
       reason: 'turnstile_timeout'

@@ -1,19 +1,21 @@
 <script setup lang="ts">
+const { proxy } = useScriptUmamiAnalytics()
+
 const items = [
   {
     label: 'Imprint',
     to: 'https://niklhut.com/imprint',
-    onclick: () => window.umami.track('footer', { action: 'imprint' })
+    onclick: () => proxy.track('footer', { action: 'imprint' })
   },
   {
     label: 'Privacy Policy',
     to: 'https://niklhut.com/privacy',
-    onclick: () => window.umami.track('footer', { action: 'privacy' })
+    onclick: () => proxy.track('footer', { action: 'privacy' })
   }
 ]
 
 function onClick() {
-  window.umami.track('footer', { action: 'github' })
+  proxy.track('footer', { action: 'github' })
 }
 </script>
 
