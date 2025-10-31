@@ -38,14 +38,20 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     dbFileName: 'local.db',
+    turnstile: {
+      secretKey: ''
+    },
     public: {
       scripts: {
         umamiAnalytics: {
           scriptInput: {
-            src: 'https://umami.is/script.js'
+            src: ''
           },
           websiteId: ''
         }
+      },
+      turnstile: {
+        siteKey: ''
       }
     }
   },
@@ -99,10 +105,5 @@ export default defineNuxtConfig({
       colorScheme: 'dark light',
       applicationName: 'Libroo'
     }
-  },
-
-  turnstile: {
-    siteKey: '1x00000000000000000000AA',
-    secretKey: '1x0000000000000000000000000000000AA'
   }
 })
