@@ -63,6 +63,12 @@ export default defineNuxtConfig({
       wrangler: {
         name: 'libroo-website',
         preview_urls: true,
+        routes: [
+          {
+            pattern: 'next.libroo.app',
+            custom_domain: true,
+          },
+        ],
         d1_databases: [
           {
             binding: 'DB',
