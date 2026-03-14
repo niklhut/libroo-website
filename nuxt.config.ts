@@ -1,4 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+const d1DatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID || process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID
+const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID || d1DatabaseId
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -73,8 +76,8 @@ export default defineNuxtConfig({
           {
             binding: 'DB',
             database_name: 'libroo-website',
-            database_id: process.env.CLOUDFLARE_D1_DATABASE_ID,
-            preview_database_id: process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID,
+            database_id: d1DatabaseId,
+            preview_database_id: d1PreviewDatabaseId,
             migrations_dir: 'server/db/migrations'
           }
         ],
@@ -82,7 +85,7 @@ export default defineNuxtConfig({
           NUXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY,
           NUXT_SITE_URL: process.env.NUXT_SITE_URL,
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC,
-          // Use an empty string or a fallback for optional vars
+          // Use an empty string for optional vars.
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID || ''
         },
         observability: {

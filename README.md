@@ -67,24 +67,21 @@ pnpm wrangler secret put NUXT_UI_PRO_LICENSE
 
 Set non-secret values in `nuxt.config.ts` under `nitro.cloudflare.wrangler.vars`.
 
-5. Apply D1 migrations.
+5. Apply migrations and deploy production.
 
 ```bash
-pnpm db:migrate:remote
+pnpm deploy:migrated
 ```
 
-6. Deploy.
-
-```bash
-pnpm deploy
-```
+This runs D1 migrations first and only then deploys the Worker.
 
 Optional preview deployment:
 
 ```bash
-pnpm db:migrate:preview
-pnpm deploy:preview
+pnpm deploy:preview:migrated
 ```
+
+For local `pnpm dev`, the app applies Drizzle migrations for the local sqlite fallback on server startup.
 
 ## 🗃️ Migrate Existing SQLite Data To D1
 
