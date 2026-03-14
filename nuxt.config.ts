@@ -1,8 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { copyDrizzleMigrations } from './server/utils/nitro-hooks'
+
 const d1DatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID || process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID
 const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID || d1DatabaseId
 
 export default defineNuxtConfig({
+
   modules: [
     '@nuxt/eslint',
     '@nuxt/image',
@@ -107,6 +110,10 @@ export default defineNuxtConfig({
         '/'
       ]
     }
+  },
+
+  hooks: {
+    'nitro:build:public-assets': copyDrizzleMigrations
   },
 
   eslint: {
