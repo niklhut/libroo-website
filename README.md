@@ -91,12 +91,22 @@ If you deploy from the Cloudflare Dashboard, use this as your single build comma
 pnpm build:cf
 ```
 
-Set an environment variable per deploy environment in the dashboard:
+By default (without any extra env vars), migration target is inferred from `CF_PAGES_BRANCH`:
 
-- Production: `CF_D1_MIGRATIONS_MODE=remote`
-- Preview: `CF_D1_MIGRATIONS_MODE=preview`
+- `remote` when `CF_PAGES_BRANCH` matches production branch
+- `preview` for all other branches
 
-The command remains the same for both environments, while the migration target changes by env var.
+The default production branch is `main`.
+If your production branch differs, set one global variable:
+
+- `CF_PRODUCTION_BRANCH=<your-production-branch>`
+
+Optional override:
+
+- `CF_D1_MIGRATIONS_MODE=remote` to migrate only production D1
+- `CF_D1_MIGRATIONS_MODE=preview` to migrate only preview D1
+- `CF_D1_MIGRATIONS_MODE=none` to skip migrations
+
 Migrations run after build and before Cloudflare publishes the deployment.
 
 ## 🗃️ Migrate Existing SQLite Data To D1
