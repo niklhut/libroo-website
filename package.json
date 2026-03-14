@@ -13,6 +13,7 @@
     "db:migrate:remote": "pnpm build && wrangler d1 migrations apply libroo-website --remote --config .output/server/wrangler.json",
     "db:migrate:preview": "pnpm build && wrangler d1 migrations apply libroo-website --remote --env preview --config .output/server/wrangler.json",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {

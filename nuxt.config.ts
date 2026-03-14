@@ -61,12 +61,12 @@ export default defineNuxtConfig({
       // Generate a deployable wrangler config in `.output/server/wrangler.json`.
       deployConfig: true,
       wrangler: {
-        name: "libroo-website",
+        name: 'libroo-website',
         preview_urls: true,
         d1_databases: [
           {
             binding: 'DB',
-            database_name: "libroo-website",
+            database_name: 'libroo-website',
             database_id: process.env.CLOUDFLARE_D1_DATABASE_ID,
             preview_database_id: process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID,
             migrations_dir: 'server/db/migrations'
@@ -78,8 +78,8 @@ export default defineNuxtConfig({
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC,
           // Use an empty string or a fallback for optional vars
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID || ''
-        },
-      },
+        }
+      }
     },
     imports: {
       dirs: [
