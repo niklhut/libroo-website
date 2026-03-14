@@ -83,6 +83,22 @@ pnpm deploy:preview:migrated
 
 For local `pnpm dev`, the app applies Drizzle migrations for the local sqlite fallback on server startup.
 
+### Cloudflare Dashboard Git Integration (Single Build Command)
+
+If you deploy from the Cloudflare Dashboard, use this as your single build command:
+
+```bash
+pnpm build:cf
+```
+
+Set an environment variable per deploy environment in the dashboard:
+
+- Production: `CF_D1_MIGRATIONS_MODE=remote`
+- Preview: `CF_D1_MIGRATIONS_MODE=preview`
+
+The command remains the same for both environments, while the migration target changes by env var.
+Migrations run after build and before Cloudflare publishes the deployment.
+
 ## 🗃️ Migrate Existing SQLite Data To D1
 
 If you already have data in `local.db`, migrate it into D1 like this:
