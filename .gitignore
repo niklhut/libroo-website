@@ -28,3 +28,6 @@ logs
 
 #DB
 local.db
+
+# Cloudflare local state
+.wrangler

@@ -9,6 +9,7 @@ export function copyDrizzleMigrations(builder: Nitro) {
 
   if (fs.existsSync(sourceDir)) {
     console.log(`Copying Drizzle migrations from ${sourceDir} to ${targetDir}`)
+    fs.mkdirSync(path.dirname(targetDir), { recursive: true })
     fs.cpSync(sourceDir, targetDir, { recursive: true })
   } else {
     console.warn(`Drizzle migrations source directory not found: ${sourceDir}`)

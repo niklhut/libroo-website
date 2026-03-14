@@ -1,7 +1,11 @@
+// https://nuxt.com/docs/api/configuration/nuxt-config
 import { copyDrizzleMigrations } from './server/utils/nitro-hooks'
 
-// https://nuxt.com/docs/api/configuration/nuxt-config
+const d1DatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID || process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID
+const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID || d1DatabaseId
+
 export default defineNuxtConfig({
+
   modules: [
     '@nuxt/eslint',
     '@nuxt/image',
@@ -37,7 +41,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    dbFileName: 'local.db',
     turnstile: {
       secretKey: ''
     },
@@ -56,11 +59,45 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: '2025-01-15',
+  compatibilityDate: '2025-03-13',
 
   nitro: {
-    experimental: {
-      tasks: true
+    preset: 'cloudflare-module',
+    cloudflare: {
+      // Generate a deployable wrangler config in `.output/server/wrangler.json`.
+      deployConfig: true,
+      wrangler: {
+        name: 'libroo-website',
+        preview_urls: true,
+        routes: [
+          {
+            pattern: 'libroo.app',
+            custom_domain: true
+          }
+        ],
+        d1_databases: [
+          {
+            binding: 'DB',
+            database_name: 'libroo-website',
+            database_id: d1DatabaseId,
+            preview_database_id: d1PreviewDatabaseId,
+            migrations_dir: 'server/db/migrations'
+          }
+        ],
+        vars: {
+          NUXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY,
+          NUXT_SITE_URL: process.env.NUXT_SITE_URL,
+          NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC,
+          // Use an empty string for optional vars.
+          NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID || ''
+        },
+        observability: {
+          logs: {
+            enabled: true,
+            invocation_logs: true
+          }
+        }
+      }
     },
     imports: {
       dirs: [
