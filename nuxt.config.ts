@@ -65,9 +65,9 @@ export default defineNuxtConfig({
         preview_urls: true,
         routes: [
           {
-            pattern: 'next.libroo.app',
-            custom_domain: true,
-          },
+            pattern: 'libroo.app',
+            custom_domain: true
+          }
         ],
         d1_databases: [
           {
@@ -84,6 +84,12 @@ export default defineNuxtConfig({
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC,
           // Use an empty string or a fallback for optional vars
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID || ''
+        },
+        observability: {
+          logs: {
+            enabled: true,
+            invocation_logs: true
+          }
         }
       }
     },
