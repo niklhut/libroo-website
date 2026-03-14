@@ -2,6 +2,7 @@ import { parse } from 'valibot'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
+  const db = useDb(event)
   const body = await readValidatedBody(event, body => parse(WaitlistSchema, body))
 
   const validationResponse = await verifyTurnstileToken(body.token)

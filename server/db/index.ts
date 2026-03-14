@@ -1,21 +1,28 @@
-import 'dotenv/config'
-import { drizzle } from 'drizzle-orm/better-sqlite3'
+import type { H3Event } from 'h3'
+import { drizzle } from 'drizzle-orm/d1'
 import * as schema from './schema'
 
-let dbFileName: string
-try {
-  // Try to load from Nuxt's runtimeConfig
-  dbFileName = useRuntimeConfig().dbFileName
-} catch {
-  // Fallback to .env config
-  dbFileName = process.env.DB_FILE_NAME as string
+type D1Binding = Parameters<typeof drizzle>[0]
+
+export interface Env {
+  DB: D1Binding
 }
 
-if (!dbFileName) {
-  throw new Error('DB_FILE_NAME is not defined in either runtimeConfig or environment variables.')
+export function createDb(env: Env) {
+  return drizzle(env.DB, { schema })
 }
 
-// You can specify any property from the libsql connection options
-const db = drizzle({ connection: { source: dbFileName }, schema })
+function getCloudflareEnv(event: H3Event): Env {
+  const env = event.context.cloudflare?.env as Env | undefined
+  const binding = env?.DB
 
-export default db
+  if (!binding) {
+    throw new Error('Missing Cloudflare D1 binding `DB`. Configure `d1_databases` in wrangler config.')
+  }
+
+  return env
+}
+
+export function useDb(event: H3Event) {
+  return createDb(getCloudflareEnv(event))
+}

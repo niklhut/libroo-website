@@ -8,6 +8,10 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "pnpm build && wrangler d1 migrations apply libroo-website --local --config .output/server/wrangler.json",
+    "db:migrate:remote": "pnpm build && wrangler d1 migrations apply libroo-website --remote --config .output/server/wrangler.json",
+    "db:migrate:preview": "pnpm build && wrangler d1 migrations apply libroo-website --remote --env preview --config .output/server/wrangler.json",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck"
   },
@@ -20,7 +24,6 @@
     "@nuxt/ui-pro": "^3.3.7",
     "@nuxtjs/seo": "3.4.0",
     "@nuxtjs/turnstile": "1.1.2",
-    "better-sqlite3": "^12.6.2",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.4.2",
@@ -28,12 +31,12 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
-    "@types/better-sqlite3": "^7.6.13",
     "drizzle-kit": "^0.31.9",
     "eslint": "^10.0.3",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vue-tsc": "^3.2.5"
+    "vue-tsc": "^3.2.5",
+    "wrangler": "^4.11.1"
   },
   "resolutions": {
     "unimport": "4.1.1"
@@ -41,7 +44,6 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",
-      "better-sqlite3",
       "esbuild",
       "sharp",
       "vue-demi"

@@ -14,10 +14,12 @@ You can find the main libroo repository [here](https://github.com/niklhut/libroo
 
 ## 🚀 Tech Stack
 
-- [Nuxt 3](https://nuxt.com/)
+- [Nuxt 4](https://nuxt.com/)
 - [Nuxt UI](https://ui.nuxt.com)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Nuxt SEO](https://nuxtseo.com/)
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/)
+- [Cloudflare D1](https://developers.cloudflare.com/d1/)
 - [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
 - [Umami Analytics](https://umami.is/)
 
@@ -28,6 +30,97 @@ git clone https://github.com/niklhut/libroo-website.git
 cd libroo-website
 pnpm install
 pnpm dev
+```
+
+## ☁️ Deploy To Cloudflare Workers
+
+This project is configured for Cloudflare Workers deployment via Wrangler.
+
+1. Install dependencies and login to Cloudflare.
+
+```bash
+pnpm install
+pnpm wrangler login
+```
+
+2. Create a D1 database.
+
+```bash
+pnpm wrangler d1 create libroo-website
+```
+
+3. Set database IDs for Nuxt's inlined Wrangler config.
+
+```bash
+export CLOUDFLARE_D1_DATABASE_ID="<production-d1-id>"
+export CLOUDFLARE_D1_PREVIEW_DATABASE_ID="<preview-d1-id>"
+```
+
+Or place these in `.env` for local CLI usage.
+
+4. Configure secrets and env vars.
+
+```bash
+pnpm wrangler secret put NUXT_TURNSTILE_SECRET_KEY
+pnpm wrangler secret put NUXT_UI_PRO_LICENSE
+```
+
+Set non-secret values in `nuxt.config.ts` under `nitro.cloudflare.wrangler.vars`.
+
+5. Apply D1 migrations.
+
+```bash
+pnpm db:migrate:remote
+```
+
+6. Deploy.
+
+```bash
+pnpm deploy
+```
+
+Optional preview deployment:
+
+```bash
+pnpm db:migrate:preview
+pnpm deploy:preview
+```
+
+## 🗃️ Migrate Existing SQLite Data To D1
+
+If you already have data in `local.db`, migrate it into D1 like this:
+
+1. Ensure your D1 schema exists first.
+
+```bash
+pnpm db:migrate:remote
+```
+
+2. Export data from local SQLite as id-preserving inserts.
+
+```bash
+mkdir -p data
+sqlite3 local.db "SELECT 'INSERT OR IGNORE INTO waitlist(id, email, created_at) VALUES (' || id || ', ' || quote(email) || ', ' || quote(created_at) || ');' FROM waitlist;" > data/waitlist-import.sql
+```
+
+3. Keep autoincrement in sync after import.
+
+```bash
+echo "INSERT OR REPLACE INTO sqlite_sequence(name, seq) VALUES ('waitlist', (SELECT IFNULL(MAX(id), 0) FROM waitlist));" >> data/waitlist-import.sql
+```
+
+4. Execute the import against D1.
+
+```bash
+pnpm build
+pnpm wrangler d1 execute libroo-website --remote --file=data/waitlist-import.sql --config .output/server/wrangler.json
+```
+
+5. Verify row counts before/after.
+
+```bash
+sqlite3 local.db "SELECT COUNT(*) FROM waitlist;"
+pnpm wrangler d1 execute libroo-website --remote --command "SELECT COUNT(*) FROM waitlist;" --config .output/server/wrangler.json
 ```
 
 📜 License
