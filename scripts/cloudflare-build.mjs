@@ -33,7 +33,9 @@ if (mode === 'none') {
   process.exit(0)
 }
 
-const baseCommand = 'pnpm wrangler d1 migrations apply libroo-website --remote --config .output/server/wrangler.json'
+// Explicitly set the migrations directory so Wrangler does not resolve it relative
+// to `.output/server/wrangler.json` (which can point to a non-existent nested path in CI).
+const baseCommand = 'pnpm wrangler d1 migrations apply libroo-website --remote --config .output/server/wrangler.json --migrations-dir server/db/migrations'
 
 if (mode === 'remote') {
   console.log('[cf-build] Applying D1 migrations in remote mode...')
