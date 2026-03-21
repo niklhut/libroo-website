@@ -1,8 +1,26 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { copyDrizzleMigrations } from './server/utils/nitro-hooks'
 
-const d1DatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID || process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID
-const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID || d1DatabaseId
+const d1DatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID
+const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID
+
+function ensureD1Env() {
+  const missing: string[] = []
+
+  if (!d1DatabaseId) {
+    missing.push('CLOUDFLARE_D1_DATABASE_ID')
+  }
+
+  if (!d1PreviewDatabaseId) {
+    missing.push('CLOUDFLARE_D1_PREVIEW_DATABASE_ID')
+  }
+
+  if (missing.length > 0) {
+    throw new Error(`Missing required D1 environment variable(s): ${missing.join(', ')}`)
+  }
+}
+
+ensureD1Env()
 
 export default defineNuxtConfig({
 
@@ -84,6 +102,19 @@ export default defineNuxtConfig({
             migrations_dir: 'server/db/migrations'
           }
         ],
+        // @ts-expect-error Nuxt wrangler types do not yet include env-specific overrides.
+        env: {
+          preview: {
+            d1_databases: [
+              {
+                binding: 'DB',
+                database_name: 'libroo-website',
+                database_id: d1PreviewDatabaseId,
+                migrations_dir: 'server/db/migrations'
+              }
+            ]
+          }
+        },
         vars: {
           NUXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY,
           NUXT_SITE_URL: process.env.NUXT_SITE_URL,

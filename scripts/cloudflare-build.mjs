@@ -14,7 +14,7 @@ if (explicitMode && !['remote', 'preview', 'none'].includes(explicitMode)) {
 
 const inferredMode = branch
   ? (branch === productionBranch ? 'remote' : 'preview')
-  : 'remote'
+  : 'none'
 
 const mode = explicitMode || inferredMode
 
@@ -22,7 +22,7 @@ if (!explicitMode) {
   if (branch) {
     console.log(`[cf-build] Inferred migration mode "${mode}" from CF_PAGES_BRANCH="${branch}" and CF_PRODUCTION_BRANCH="${productionBranch}".`)
   } else {
-    console.log('[cf-build] CF_PAGES_BRANCH is not set; defaulting migration mode to "remote".')
+    console.log('[cf-build] CF_PAGES_BRANCH is not set; defaulting migration mode to "none" (migrations skipped). Set CF_D1_MIGRATIONS_MODE explicitly to run migrations.')
   }
 }
 

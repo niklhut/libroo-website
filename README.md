@@ -43,13 +43,14 @@ pnpm install
 pnpm wrangler login
 ```
 
-2. Create a D1 database.
+1. Create D1 databases for production and preview.
 
 ```bash
 pnpm wrangler d1 create libroo-website
+pnpm wrangler d1 create libroo-website-preview
 ```
 
-3. Set database IDs for Nuxt's inlined Wrangler config.
+1. Set database IDs for Nuxt's inlined Wrangler config.
 
 ```bash
 export CLOUDFLARE_D1_DATABASE_ID="<production-d1-id>"
@@ -58,7 +59,7 @@ export CLOUDFLARE_D1_PREVIEW_DATABASE_ID="<preview-d1-id>"
 
 Or place these in `.env` for local CLI usage.
 
-4. Configure secrets and env vars.
+1. Configure secrets and env vars.
 
 ```bash
 pnpm wrangler secret put NUXT_TURNSTILE_SECRET_KEY
@@ -67,7 +68,7 @@ pnpm wrangler secret put NUXT_UI_PRO_LICENSE
 
 Set non-secret values in `nuxt.config.ts` under `nitro.cloudflare.wrangler.vars`.
 
-5. Apply migrations and deploy production.
+1. Apply migrations and deploy production.
 
 ```bash
 pnpm deploy:migrated
@@ -95,6 +96,7 @@ By default (without any extra env vars), migration target is inferred from `CF_P
 
 - `remote` when `CF_PAGES_BRANCH` matches production branch
 - `preview` for all other branches
+- `none` when `CF_PAGES_BRANCH` is missing (fail-closed; no migrations)
 
 The default production branch is `main`.
 If your production branch differs, set one global variable:
@@ -119,27 +121,27 @@ If you already have data in `local.db`, migrate it into D1 like this:
 pnpm db:migrate:remote
 ```
 
-2. Export data from local SQLite as id-preserving inserts.
+1. Export data from local SQLite as id-preserving inserts.
 
 ```bash
 mkdir -p data
 sqlite3 local.db "SELECT 'INSERT OR IGNORE INTO waitlist(id, email, created_at) VALUES (' || id || ', ' || quote(email) || ', ' || quote(created_at) || ');' FROM waitlist;" > data/waitlist-import.sql
 ```
 
-3. Keep autoincrement in sync after import.
+1. Keep autoincrement in sync after import.
 
 ```bash
 echo "INSERT OR REPLACE INTO sqlite_sequence(name, seq) VALUES ('waitlist', (SELECT IFNULL(MAX(id), 0) FROM waitlist));" >> data/waitlist-import.sql
 ```
 
-4. Execute the import against D1.
+1. Execute the import against D1.
 
 ```bash
 pnpm build
 pnpm wrangler d1 execute libroo-website --remote --file=data/waitlist-import.sql --config .output/server/wrangler.json
 ```
 
-5. Verify row counts before/after.
+1. Verify row counts before/after.
 
 ```bash
 sqlite3 local.db "SELECT COUNT(*) FROM waitlist;"
