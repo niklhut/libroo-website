@@ -34,82 +34,58 @@ pnpm dev
 
 ## ☁️ Deploy To Cloudflare Workers
 
-This project is configured for Cloudflare Workers deployment via Wrangler.
+This repository deploys via GitHub Actions (not Cloudflare Dashboard Git builds).
 
-1. Install dependencies and login to Cloudflare.
-
-```bash
-pnpm install
-pnpm wrangler login
-```
-
-1. Create D1 databases for production and preview.
+1. Create a production D1 database.
 
 ```bash
 pnpm wrangler d1 create libroo-website
-pnpm wrangler d1 create libroo-website-preview
 ```
 
-1. Set database IDs for Nuxt's inlined Wrangler config.
+1. Add GitHub repository secrets.
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_D1_DATABASE_ID` (production DB UUID)
+- `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` (optional dedicated preview DB UUID)
+- `NUXT_UI_PRO_LICENSE`
+- `NUXT_TURNSTILE_SECRET_KEY_PRODUCTION`
+- `NUXT_TURNSTILE_SECRET_KEY_PREVIEW` (optional; falls back to production secret)
+
+1. Add GitHub repository variables used by `nuxt.config.ts` vars injection.
+
+- `NUXT_PUBLIC_TURNSTILE_SITE_KEY`
+- `NUXT_SITE_URL`
+- `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC`
+- `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID` (optional)
+
+1. Workflows.
+
+- Push to `main` runs `.github/workflows/deploy-production.yml`.
+- Pull request updates run `.github/workflows/deploy-preview.yml`.
+- Closing a pull request runs `.github/workflows/cleanup-preview.yml`.
+
+Preview deploy behavior:
+
+- Each PR gets a dedicated Worker name: `libroo-preview-pr-<number>`.
+- Each PR gets a dedicated D1 database: `libroo-preview-pr-<number>`.
+- On PR close, the preview Worker and D1 DB are deleted.
+
+Production deploy behavior:
+
+- Uses `libroo-website` Worker name.
+- Applies migrations against production D1 before deploy.
+- Routes custom domain only for production deploys.
+
+For local/manual CLI usage, you can still run:
 
 ```bash
-export CLOUDFLARE_D1_DATABASE_ID="<production-d1-id>"
-export CLOUDFLARE_D1_PREVIEW_DATABASE_ID="<preview-d1-id>"
-```
-
-Or place these in `.env` for local CLI usage.
-
-1. Configure secrets and env vars.
-
-```bash
-pnpm wrangler secret put NUXT_TURNSTILE_SECRET_KEY
-pnpm wrangler secret put NUXT_UI_PRO_LICENSE
-```
-
-Set non-secret values in `nuxt.config.ts` under `nitro.cloudflare.wrangler.vars`.
-
-1. Apply migrations and deploy production.
-
-```bash
-pnpm deploy:migrated
-```
-
-This runs D1 migrations first and only then deploys the Worker.
-
-Optional preview deployment:
-
-```bash
-pnpm deploy:preview:migrated
+pnpm db:migrate:remote
+pnpm deploy
 ```
 
 For local `pnpm dev`, the app applies Drizzle migrations for the local sqlite fallback on server startup.
 
-### Cloudflare Dashboard Git Integration (Single Build Command)
-
-If you deploy from the Cloudflare Dashboard, use this as your single build command:
-
-```bash
-pnpm build:cf
-```
-
-By default (without any extra env vars), migration target is inferred from `CF_PAGES_BRANCH`:
-
-- `remote` when `CF_PAGES_BRANCH` matches production branch
-- `preview` for all other branches
-- `none` when `CF_PAGES_BRANCH` is missing (fail-closed; no migrations)
-
-The default production branch is `main`.
-If your production branch differs, set one global variable:
-
-- `CF_PRODUCTION_BRANCH=<your-production-branch>`
-
-Optional override:
-
-- `CF_D1_MIGRATIONS_MODE=remote` to migrate only production D1
-- `CF_D1_MIGRATIONS_MODE=preview` to migrate only preview D1
-- `CF_D1_MIGRATIONS_MODE=none` to skip migrations
-
-Migrations run after build and before Cloudflare publishes the deployment.
 
 ## 🗃️ Migrate Existing SQLite Data To D1
 

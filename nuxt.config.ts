@@ -2,17 +2,23 @@
 import { copyDrizzleMigrations } from './server/utils/nitro-hooks'
 
 const d1DatabaseId = process.env.CLOUDFLARE_D1_DATABASE_ID
-const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID
+const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID || d1DatabaseId
+const workerName = process.env.CLOUDFLARE_WORKER_NAME || 'libroo-website'
+const deployEnv = process.env.CF_DEPLOY_ENV || 'local'
+const isDeployRun = ['production', 'preview'].includes(deployEnv)
+const placeholderDatabaseId = '00000000-0000-0000-0000-000000000000'
+const resolvedD1DatabaseId = d1DatabaseId || placeholderDatabaseId
+const resolvedD1PreviewDatabaseId = d1PreviewDatabaseId || resolvedD1DatabaseId
 
 function ensureD1Env() {
   const missing: string[] = []
 
-  if (!d1DatabaseId) {
-    missing.push('CLOUDFLARE_D1_DATABASE_ID')
+  if (!isDeployRun) {
+    return
   }
 
-  if (!d1PreviewDatabaseId) {
-    missing.push('CLOUDFLARE_D1_PREVIEW_DATABASE_ID')
+  if (!d1DatabaseId) {
+    missing.push('CLOUDFLARE_D1_DATABASE_ID')
   }
 
   if (missing.length > 0) {
@@ -85,36 +91,25 @@ export default defineNuxtConfig({
       // Generate a deployable wrangler config in `.output/server/wrangler.json`.
       deployConfig: true,
       wrangler: {
-        name: 'libroo-website',
+        name: workerName,
         preview_urls: true,
-        routes: [
-          {
-            pattern: 'libroo.app',
-            custom_domain: true
-          }
-        ],
+        routes: deployEnv === 'production'
+          ? [
+              {
+                pattern: 'libroo.app',
+                custom_domain: true
+              }
+            ]
+          : [],
         d1_databases: [
           {
             binding: 'DB',
             database_name: 'libroo-website',
-            database_id: d1DatabaseId,
-            preview_database_id: d1PreviewDatabaseId,
+            database_id: resolvedD1DatabaseId,
+            preview_database_id: resolvedD1PreviewDatabaseId,
             migrations_dir: 'server/db/migrations'
           }
         ],
-        // @ts-expect-error Nuxt wrangler types do not yet include env-specific overrides.
-        env: {
-          preview: {
-            d1_databases: [
-              {
-                binding: 'DB',
-                database_name: 'libroo-website',
-                database_id: d1PreviewDatabaseId,
-                migrations_dir: 'server/db/migrations'
-              }
-            ]
-          }
-        },
         vars: {
           NUXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY,
           NUXT_SITE_URL: process.env.NUXT_SITE_URL,
