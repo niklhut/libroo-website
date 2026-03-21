@@ -1,7 +1,26 @@
 import { execSync } from 'node:child_process'
+import path from 'node:path'
+import fs from 'node:fs'
 
 function run(command) {
   execSync(command, { stdio: 'inherit' })
+}
+
+function ensureWranglerMigrationsPath() {
+  const sourceDir = path.resolve('server/db/migrations')
+  const wranglerResolvedDirs = [
+    path.resolve('.output/server/server/db/migrations'),
+    path.resolve('.output/server/db/migrations')
+  ]
+
+  if (!fs.existsSync(sourceDir)) {
+    throw new Error(`[cf-build] Migrations directory not found: ${sourceDir}`)
+  }
+
+  for (const wranglerResolvedDir of wranglerResolvedDirs) {
+    fs.mkdirSync(path.dirname(wranglerResolvedDir), { recursive: true })
+    fs.cpSync(sourceDir, wranglerResolvedDir, { recursive: true })
+  }
 }
 
 const explicitMode = process.env.CF_D1_MIGRATIONS_MODE?.trim().toLowerCase()
@@ -33,9 +52,11 @@ if (mode === 'none') {
   process.exit(0)
 }
 
-// Explicitly set the migrations directory so Wrangler does not resolve it relative
-// to `.output/server/wrangler.json` (which can point to a non-existent nested path in CI).
-const baseCommand = 'pnpm wrangler d1 migrations apply libroo-website --remote --config .output/server/wrangler.json --migrations-dir server/db/migrations'
+// Wrangler resolves `migrations_dir` relative to `.output/server/wrangler.json` in CI.
+// Stage migrations into the resolved path to keep compatibility across Wrangler versions.
+ensureWranglerMigrationsPath()
+
+const baseCommand = 'pnpm wrangler d1 migrations apply libroo-website --remote --config .output/server/wrangler.json'
 
 if (mode === 'remote') {
   console.log('[cf-build] Applying D1 migrations in remote mode...')
