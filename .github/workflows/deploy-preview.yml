@@ -24,8 +24,10 @@ jobs:
     permissions:
       contents: read
   pull-requests: write
+  env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_ACCOUNT_SUBDOMAIN: ${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}
       NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
       NUXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.NUXT_PUBLIC_TURNSTILE_SITE_KEY }}
       NUXT_SITE_URL: ${{ vars.NUXT_SITE_URL }}
