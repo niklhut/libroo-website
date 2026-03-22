@@ -54,6 +54,7 @@ pnpm wrangler d1 create libroo-website
 
 1. Add GitHub repository variables used by `nuxt.config.ts` vars injection.
 
+- `CLOUDFLARE_ACCOUNT_SUBDOMAIN` (Workers subdomain prefix used to build preview URLs, e.g. `<subdomain>.workers.dev`)
 - `NUXT_PUBLIC_TURNSTILE_SITE_KEY`
 - `NUXT_SITE_URL`
 - `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC`

@@ -26,7 +26,26 @@ function ensureD1Env() {
   }
 }
 
+function ensurePreviewD1Isolation() {
+  if (deployEnv !== 'preview') {
+    return
+  }
+
+  const previewDbConfigured = Boolean(process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID)
+  const previewFallsBackToPrimary = !previewDbConfigured
+    && Boolean(d1PreviewDatabaseId)
+    && Boolean(d1DatabaseId)
+    && resolvedD1PreviewDatabaseId === d1DatabaseId
+
+  if (previewFallsBackToPrimary) {
+    throw new Error(
+      'Preview deploy detected without CLOUDFLARE_D1_PREVIEW_DATABASE_ID. Refusing to run preview against the primary D1 database.'
+    )
+  }
+}
+
 ensureD1Env()
+ensurePreviewD1Isolation()
 
 export default defineNuxtConfig({
 

@@ -121,9 +121,15 @@ jobs:
           CF_DEPLOY_ENV: preview
         run: |
           pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "${{ steps.names.outputs.worker_name }}"
-          
+
           WORKER_NAME="${{ steps.names.outputs.worker_name }}"
           ACCOUNT_SUBDOMAIN="${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}"
+
+          if [ -z "$ACCOUNT_SUBDOMAIN" ]; then
+            echo "Missing required repository variable CLOUDFLARE_ACCOUNT_SUBDOMAIN; cannot construct preview URL." >&2
+            exit 1
+          fi
+
           PREVIEW_URL="https://${WORKER_NAME}.${ACCOUNT_SUBDOMAIN}.workers.dev"
           echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
 
@@ -146,3 +152,19 @@ jobs:
               repo: context.repo.repo,
               body: body
             });
+
+      - name: Write preview URL to workflow summary
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
+          WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          PR_NUMBER: ${{ steps.names.outputs.pr_number }}
+        run: |
+          {
+            echo "### Preview deployment"
+            echo ""
+            echo "Preview URL: ${PREVIEW_URL}"
+            echo "Worker: ${WORKER_NAME}"
+            echo "PR Number: ${PR_NUMBER}"
+            echo "D1 Database: libroo-preview-pr-${PR_NUMBER}"
+          } >> "$GITHUB_STEP_SUMMARY"

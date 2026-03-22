@@ -53,7 +53,14 @@ jobs:
 
       - name: Sync production runtime secrets
         run: |
-          printf '%s' "${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}" \
+          SECRET_VAL="${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}"
+
+          if [ -z "$SECRET_VAL" ]; then
+            echo "Missing NUXT_TURNSTILE_SECRET_KEY_PRODUCTION; refusing to set an empty runtime secret." >&2
+            exit 1
+          fi
+
+          printf '%s' "$SECRET_VAL" \
             | pnpm dlx wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Deploy production Worker
