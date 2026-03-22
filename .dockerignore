@@ -1,7 +1,0 @@
-/.nuxt
-/.output
-**/node_modules
-
-.gitignore
-README.md
-**.DS_Store
