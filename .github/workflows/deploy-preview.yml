@@ -1,0 +1,179 @@
+name: Deploy Preview
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number
+        required: true
+
+concurrency:
+  group: deploy-preview-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: ${{ (github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false) && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_ACCOUNT_SUBDOMAIN: ${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}
+      NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
+      NUXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.NUXT_PUBLIC_TURNSTILE_SITE_KEY }}
+      NUXT_SITE_URL: ${{ vars.NUXT_SITE_URL }}
+      NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: ${{ vars.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC }}
+      NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: ${{ vars.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Derive preview resource names
+        id: names
+        shell: bash
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number || inputs.pr_number }}"
+          DB_NAME="libroo-preview-pr-${PR_NUMBER}"
+          WORKER_NAME="libroo-preview-pr-${PR_NUMBER}"
+          echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "db_name=${DB_NAME}" >> "$GITHUB_OUTPUT"
+          echo "worker_name=${WORKER_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure preview D1 database exists
+        id: preview-db
+        shell: bash
+        run: |
+          DB_NAME="${{ steps.names.outputs.db_name }}"
+          ERR_FILE="d1-info.err"
+
+          if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json 2>"$ERR_FILE"; then
+            echo "Using existing D1 database: $DB_NAME"
+          else
+            if grep -Eiq 'not found|no such database' "$ERR_FILE"; then
+              echo "Creating D1 database: $DB_NAME"
+              pnpm dlx wrangler@4 d1 create "$DB_NAME"
+              pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json 2>"$ERR_FILE"
+            else
+              echo "Failed to fetch D1 database info for $DB_NAME" >&2
+              cat "$ERR_FILE" >&2
+              exit 1
+            fi
+          fi
+
+          DB_ID=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('d1-info.json', 'utf8')); process.stdout.write(d.uuid || d.database_id || d.id || '')")
+          if [ -z "$DB_ID" ]; then
+            echo "Failed to resolve preview D1 database ID for $DB_NAME" >&2
+            exit 1
+          fi
+
+          echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Build preview output
+        env:
+          CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
+          CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
+          CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          CF_DEPLOY_ENV: preview
+        run: pnpm build
+
+      - name: Apply preview D1 migrations
+        env:
+          CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
+          CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
+          CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          CF_DEPLOY_ENV: preview
+        run: pnpm dlx wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
+
+      - name: Sync preview runtime secrets
+        env:
+          CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+        run: |
+          SECRET_VAL="${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PREVIEW || secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}"
+
+          if [ -z "$SECRET_VAL" ]; then
+            echo "Missing NUXT_TURNSTILE_SECRET_KEY_PREVIEW/PRODUCTION; refusing to set an empty runtime secret." >&2
+            exit 1
+          fi
+
+          printf '%s' "$SECRET_VAL" \
+            | pnpm dlx wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
+
+      - name: Deploy preview Worker
+        id: deploy
+        env:
+          CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
+          CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
+          CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          CF_DEPLOY_ENV: preview
+        run: |
+          ACCOUNT_SUBDOMAIN="${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}"
+
+          if [ -z "$ACCOUNT_SUBDOMAIN" ]; then
+            echo "Missing required repository variable CLOUDFLARE_ACCOUNT_SUBDOMAIN; cannot construct preview URL." >&2
+            exit 1
+          fi
+
+          WORKER_NAME="${{ steps.names.outputs.worker_name }}"
+
+          pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "$WORKER_NAME"
+
+          PREVIEW_URL="https://${WORKER_NAME}.${ACCOUNT_SUBDOMAIN}.workers.dev"
+          echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
+
+      - name: Post preview URL to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
+          WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          PR_NUMBER: ${{ steps.names.outputs.pr_number }}
+        with:
+          script: |
+            const previewUrl = process.env.PREVIEW_URL;
+            const workerName = process.env.WORKER_NAME;
+            const prNumber = process.env.PR_NUMBER;
+            const body = '✨ Preview deploy ready!\n\n🔗 [' + workerName + '.workers.dev](' + previewUrl + ')\n\nD1 Database: `libroo-preview-pr-' + prNumber + '`';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Write preview URL to workflow summary
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
+          WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          PR_NUMBER: ${{ steps.names.outputs.pr_number }}
+        run: |
+          {
+            echo "### Preview deployment"
+            echo ""
+            echo "Preview URL: ${PREVIEW_URL}"
+            echo "Worker: ${WORKER_NAME}"
+            echo "PR Number: ${PR_NUMBER}"
+            echo "D1 Database: libroo-preview-pr-${PR_NUMBER}"
+          } >> "$GITHUB_STEP_SUMMARY"

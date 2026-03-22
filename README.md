@@ -14,10 +14,12 @@ You can find the main libroo repository [here](https://github.com/niklhut/libroo
 
 ## 🚀 Tech Stack
 
-- [Nuxt 3](https://nuxt.com/)
+- [Nuxt 4](https://nuxt.com/)
 - [Nuxt UI](https://ui.nuxt.com)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Nuxt SEO](https://nuxtseo.com/)
+- [Cloudflare Workers](https://developers.cloudflare.com/workers/)
+- [Cloudflare D1](https://developers.cloudflare.com/d1/)
 - [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/)
 - [Umami Analytics](https://umami.is/)
 
@@ -30,6 +32,61 @@ pnpm install
 pnpm dev
 ```
 
-📜 License
+## ☁️ Deploy To Cloudflare Workers
+
+This repository deploys via GitHub Actions (not Cloudflare Dashboard Git builds).
+
+1. Create a production D1 database.
+
+```bash
+pnpm wrangler d1 create libroo-website
+```
+
+1. Add GitHub repository secrets.
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_D1_DATABASE_ID` (production DB UUID)
+- `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` (optional dedicated preview DB UUID)
+- `NUXT_UI_PRO_LICENSE`
+- `NUXT_TURNSTILE_SECRET_KEY_PRODUCTION`
+- `NUXT_TURNSTILE_SECRET_KEY_PREVIEW` (optional; falls back to production secret)
+
+1. Add GitHub repository variables used by `nuxt.config.ts` vars injection.
+
+- `CLOUDFLARE_ACCOUNT_SUBDOMAIN` (Workers subdomain prefix used to build preview URLs, e.g. `<subdomain>.workers.dev`)
+- `NUXT_PUBLIC_TURNSTILE_SITE_KEY`
+- `NUXT_SITE_URL`
+- `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC`
+- `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID` (optional)
+
+1. Workflows.
+
+- Push to `main` runs `.github/workflows/deploy-production.yml`.
+- Pull request updates run `.github/workflows/deploy-preview.yml`.
+- Closing a pull request runs `.github/workflows/cleanup-preview.yml`.
+
+Preview deploy behavior:
+
+- Each PR gets a dedicated Worker name: `libroo-preview-pr-<number>`.
+- Each PR gets a dedicated D1 database: `libroo-preview-pr-<number>`.
+- On PR close, the preview Worker and D1 DB are deleted.
+
+Production deploy behavior:
+
+- Uses `libroo-website` Worker name.
+- Applies migrations against production D1 before deploy.
+- Routes custom domain only for production deploys.
+
+For local/manual CLI usage, you can still run:
+
+```bash
+pnpm db:migrate:remote
+pnpm deploy
+```
+
+For local `pnpm dev`, the app applies Drizzle migrations for the local sqlite fallback on server startup.
+
+## 📜 License
 
 This project is licensed under the MIT License. See [LICENSE](/LICENSE) for details.
