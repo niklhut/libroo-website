@@ -66,12 +66,20 @@ jobs:
         shell: bash
         run: |
           DB_NAME="${{ steps.names.outputs.db_name }}"
-          if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json 2>/dev/null; then
+          ERR_FILE="d1-info.err"
+
+          if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json 2>"$ERR_FILE"; then
             echo "Using existing D1 database: $DB_NAME"
           else
-            echo "Creating D1 database: $DB_NAME"
-            pnpm dlx wrangler@4 d1 create "$DB_NAME"
-            pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json
+            if grep -Eiq 'not found|no such database' "$ERR_FILE"; then
+              echo "Creating D1 database: $DB_NAME"
+              pnpm dlx wrangler@4 d1 create "$DB_NAME"
+              pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json 2>"$ERR_FILE"
+            else
+              echo "Failed to fetch D1 database info for $DB_NAME" >&2
+              cat "$ERR_FILE" >&2
+              exit 1
+            fi
           fi
 
           DB_ID=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('d1-info.json', 'utf8')); process.stdout.write(d.uuid || d.database_id || d.id || '')")
@@ -120,15 +128,16 @@ jobs:
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
           CF_DEPLOY_ENV: preview
         run: |
-          pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "${{ steps.names.outputs.worker_name }}"
-
-          WORKER_NAME="${{ steps.names.outputs.worker_name }}"
           ACCOUNT_SUBDOMAIN="${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}"
 
           if [ -z "$ACCOUNT_SUBDOMAIN" ]; then
             echo "Missing required repository variable CLOUDFLARE_ACCOUNT_SUBDOMAIN; cannot construct preview URL." >&2
             exit 1
           fi
+
+          WORKER_NAME="${{ steps.names.outputs.worker_name }}"
+
+          pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "$WORKER_NAME"
 
           PREVIEW_URL="https://${WORKER_NAME}.${ACCOUNT_SUBDOMAIN}.workers.dev"
           echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
