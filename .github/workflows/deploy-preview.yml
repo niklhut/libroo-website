@@ -65,12 +65,12 @@ jobs:
         shell: bash
         run: |
           DB_NAME="${{ steps.names.outputs.db_name }}"
-          if pnpm dlx wrangler@4.76.0 d1 info "$DB_NAME" --json > d1-info.json 2>/dev/null; then
+          if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json 2>/dev/null; then
             echo "Using existing D1 database: $DB_NAME"
           else
             echo "Creating D1 database: $DB_NAME"
-            pnpm dlx wrangler@4.76.0 d1 create "$DB_NAME"
-            pnpm dlx wrangler@4.76.0 d1 info "$DB_NAME" --json > d1-info.json
+            pnpm dlx wrangler@4 d1 create "$DB_NAME"
+            pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json
           fi
 
           DB_ID=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('d1-info.json', 'utf8')); process.stdout.write(d.uuid || d.database_id || d.id || '')")
@@ -98,14 +98,14 @@ jobs:
           CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
           CF_DEPLOY_ENV: preview
-        run: pnpm dlx wrangler@4.76.0 d1 migrations apply DB --remote --config .output/server/wrangler.json
+        run: pnpm dlx wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
 
       - name: Sync preview runtime secrets
         env:
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
         run: |
           printf '%s' "${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PREVIEW || secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}" \
-            | pnpm dlx wrangler@4.76.0 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
+            | pnpm dlx wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Deploy preview Worker
         id: deploy
@@ -115,7 +115,7 @@ jobs:
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
           CF_DEPLOY_ENV: preview
         run: |
-          pnpm dlx wrangler@4.76.0 deploy --config .output/server/wrangler.json --name "${{ steps.names.outputs.worker_name }}"
+          pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "${{ steps.names.outputs.worker_name }}"
           
           # Fetch account subdomain from Cloudflare API
           ACCOUNT_INFO=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts" \

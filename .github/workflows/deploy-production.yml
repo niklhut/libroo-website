@@ -52,15 +52,15 @@ jobs:
         run: node ./scripts/prepare-wrangler-migrations.mjs
 
       - name: Apply production D1 migrations
-        run: pnpm dlx wrangler@4.76.0 d1 migrations apply DB --remote --config .output/server/wrangler.json
+        run: pnpm dlx wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
 
       - name: Sync production runtime secrets
         run: |
           printf '%s' "${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}" \
-            | pnpm dlx wrangler@4.76.0 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
+            | pnpm dlx wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Deploy production Worker
-        run: pnpm dlx wrangler@4.76.0 deploy --config .output/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME"
+        run: pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Verify production deployment
         run: |

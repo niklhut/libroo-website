@@ -35,8 +35,8 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           DB_NAME="libroo-preview-pr-${PR_NUMBER}"
 
-          if pnpm dlx wrangler@4.76.0 d1 info "$DB_NAME" --json > /dev/null 2>&1; then
-            pnpm dlx wrangler@4.76.0 d1 delete "$DB_NAME" --skip-confirmation
+          if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > /dev/null 2>&1; then
+            pnpm dlx wrangler@4 d1 delete "$DB_NAME" --skip-confirmation
           else
             echo "No preview DB found for $DB_NAME; skipping delete."
           fi
@@ -47,4 +47,4 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           WORKER_NAME="libroo-preview-pr-${PR_NUMBER}"
 
-          pnpm dlx wrangler@4.76.0 delete "$WORKER_NAME" --force || true
+          pnpm dlx wrangler@4 delete "$WORKER_NAME" --force || true
