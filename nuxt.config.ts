@@ -6,9 +6,26 @@ const d1PreviewDatabaseId = process.env.CLOUDFLARE_D1_PREVIEW_DATABASE_ID || d1D
 const workerName = process.env.CLOUDFLARE_WORKER_NAME || 'libroo-website'
 const deployEnv = process.env.CF_DEPLOY_ENV || 'local'
 const isDeployRun = ['production', 'preview'].includes(deployEnv)
+const overrideExistingDnsRecord = process.env.CLOUDFLARE_OVERRIDE_EXISTING_DNS_RECORD === 'true'
 const placeholderDatabaseId = '00000000-0000-0000-0000-000000000000'
 const resolvedD1DatabaseId = d1DatabaseId || placeholderDatabaseId
 const resolvedD1PreviewDatabaseId = d1PreviewDatabaseId || resolvedD1DatabaseId
+
+type ProductionRoute = {
+  pattern: string
+  custom_domain: true
+  override_existing_dns_record?: true
+}
+
+const productionRoutes: ProductionRoute[] = deployEnv === 'production'
+  ? [
+      {
+        pattern: 'libroo.app',
+        custom_domain: true,
+        ...(overrideExistingDnsRecord ? { override_existing_dns_record: true } : {})
+      }
+    ]
+  : []
 
 function ensureD1Env() {
   const missing: string[] = []
@@ -112,14 +129,7 @@ export default defineNuxtConfig({
       wrangler: {
         name: workerName,
         preview_urls: true,
-        routes: deployEnv === 'production'
-          ? [
-              {
-                pattern: 'libroo.app',
-                custom_domain: true
-              }
-            ]
-          : [],
+        routes: productionRoutes,
         d1_databases: [
           {
             binding: 'DB',
