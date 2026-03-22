@@ -87,44 +87,6 @@ pnpm deploy
 
 For local `pnpm dev`, the app applies Drizzle migrations for the local sqlite fallback on server startup.
 
-
-## 🗃️ Migrate Existing SQLite Data To D1
-
-If you already have data in `local.db`, migrate it into D1 like this:
-
-1. Ensure your D1 schema exists first.
-
-```bash
-pnpm db:migrate:remote
-```
-
-1. Export data from local SQLite as id-preserving inserts.
-
-```bash
-mkdir -p data
-sqlite3 local.db "SELECT 'INSERT OR IGNORE INTO waitlist(id, email, created_at) VALUES (' || id || ', ' || quote(email) || ', ' || quote(created_at) || ');' FROM waitlist;" > data/waitlist-import.sql
-```
-
-1. Keep autoincrement in sync after import.
-
-```bash
-echo "INSERT OR REPLACE INTO sqlite_sequence(name, seq) VALUES ('waitlist', (SELECT IFNULL(MAX(id), 0) FROM waitlist));" >> data/waitlist-import.sql
-```
-
-1. Execute the import against D1.
-
-```bash
-pnpm build
-pnpm wrangler d1 execute libroo-website --remote --file=data/waitlist-import.sql --config .output/server/wrangler.json
-```
-
-1. Verify row counts before/after.
-
-```bash
-sqlite3 local.db "SELECT COUNT(*) FROM waitlist;"
-pnpm wrangler d1 execute libroo-website --remote --command "SELECT COUNT(*) FROM waitlist;" --config .output/server/wrangler.json
-```
-
-📜 License
+## 📜 License
 
 This project is licensed under the MIT License. See [LICENSE](/LICENSE) for details.
