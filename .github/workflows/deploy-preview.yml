@@ -108,9 +108,40 @@ jobs:
             | pnpm dlx wrangler@4.76.0 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Deploy preview Worker
+        id: deploy
         env:
           CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
           CF_DEPLOY_ENV: preview
-        run: pnpm dlx wrangler@4.76.0 deploy --config .output/server/wrangler.json --name "${{ steps.names.outputs.worker_name }}"
+        run: |
+          pnpm dlx wrangler@4.76.0 deploy --config .output/server/wrangler.json --name "${{ steps.names.outputs.worker_name }}"
+          
+          # Fetch account subdomain from Cloudflare API
+          ACCOUNT_INFO=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json")
+          
+          ACCOUNT_SUBDOMAIN=$(echo "$ACCOUNT_INFO" | jq -r '.result[0].name // .result[0].account.name // empty' | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
+          
+          if [ -z "$ACCOUNT_SUBDOMAIN" ]; then
+            ACCOUNT_SUBDOMAIN="${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
+          fi
+          
+          WORKER_NAME="${{ steps.names.outputs.worker_name }}"
+          PREVIEW_URL="https://${WORKER_NAME}.${ACCOUNT_SUBDOMAIN}.workers.dev"
+          echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
+
+      - name: Post preview URL to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.deploy.outputs.preview_url }}';
+            const prNumber = context.issue.number;
+            const workerName = '${{ steps.names.outputs.worker_name }}';
+            github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✨ Preview deploy ready!\n\n🔗 **[${workerName}.workers.dev](${previewUrl})**\n\nD1 Database: \`libroo-preview-pr-${{ steps.names.outputs.pr_number }}\``
+            });

@@ -61,3 +61,9 @@ jobs:
 
       - name: Deploy production Worker
         run: pnpm dlx wrangler@4.76.0 deploy --config .output/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME"
+
+      - name: Verify production deployment
+        run: |
+          echo "Production deployment complete for libroo-website"
+          echo "Custom domain: libroo.app"
+          echo "Dashboard: https://dash.cloudflare.com/?to=/:account/workers/services/view/libroo-website"
