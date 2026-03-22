@@ -10,13 +10,20 @@ const overrideExistingDnsRecord = process.env.CLOUDFLARE_OVERRIDE_EXISTING_DNS_R
 const placeholderDatabaseId = '00000000-0000-0000-0000-000000000000'
 const resolvedD1DatabaseId = d1DatabaseId || placeholderDatabaseId
 const resolvedD1PreviewDatabaseId = d1PreviewDatabaseId || resolvedD1DatabaseId
-const productionRoutes = deployEnv === 'production'
+
+type ProductionRoute = {
+  pattern: string
+  custom_domain: true
+  override_existing_dns_record?: true
+}
+
+const productionRoutes: ProductionRoute[] = deployEnv === 'production'
   ? [
       {
         pattern: 'libroo.app',
         custom_domain: true,
         ...(overrideExistingDnsRecord ? { override_existing_dns_record: true } : {})
-      } as { pattern: string, custom_domain: true }
+      }
     ]
   : []
 

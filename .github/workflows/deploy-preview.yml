@@ -66,24 +66,44 @@ jobs:
         shell: bash
         run: |
           DB_NAME="${{ steps.names.outputs.db_name }}"
-          pnpm dlx wrangler@4 d1 list --json > d1-list.json
+          echo "Ensuring D1 database exists: $DB_NAME"
+          set +e
+          CREATE_OUTPUT=$(pnpm dlx wrangler@4 d1 create "$DB_NAME" 2>&1)
+          CREATE_EXIT=$?
+          set -e
+          echo "$CREATE_OUTPUT"
 
-          DB_EXISTS=$(node -e "const fs=require('fs'); const list=JSON.parse(fs.readFileSync('d1-list.json', 'utf8')); const exists=Array.isArray(list) && list.some((db) => db?.name === process.argv[1]); process.stdout.write(exists ? 'true' : 'false');" "$DB_NAME")
-
-          if [ "$DB_EXISTS" != "true" ]; then
-            echo "Creating D1 database: $DB_NAME"
-            pnpm dlx wrangler@4 d1 create "$DB_NAME"
-          else
-            echo "Using existing D1 database: $DB_NAME"
+          if [ "$CREATE_EXIT" -ne 0 ]; then
+            if echo "$CREATE_OUTPUT" | grep -qiE 'already exists|7502'; then
+              echo "D1 database already exists: $DB_NAME"
+            else
+              echo "Failed to create D1 database: $DB_NAME" >&2
+              exit "$CREATE_EXIT"
+            fi
           fi
 
-          pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
+          DB_ID=""
 
-          DB_ID=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('d1-info.json', 'utf8')); process.stdout.write(d.uuid || d.database_id || d.id || '')")
-          if [ -z "$DB_ID" ]; then
-            echo "Failed to resolve preview D1 database ID for $DB_NAME" >&2
-            exit 1
-          fi
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json; then
+              DB_ID=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('d1-info.json', 'utf8')); process.stdout.write(d.uuid || d.database_id || d.id || '')")
+              if [ -n "$DB_ID" ]; then
+                break
+              fi
+            fi
+
+            if [ "$ATTEMPT" -eq "$MAX_ATTEMPTS" ]; then
+              echo "Failed to resolve preview D1 database ID for $DB_NAME after ${MAX_ATTEMPTS} attempts" >&2
+              exit 1
+            fi
+
+            SLEEP_SECONDS=$((ATTEMPT * 2))
+            echo "D1 database info not ready yet for $DB_NAME (attempt ${ATTEMPT}/${MAX_ATTEMPTS}). Retrying in ${SLEEP_SECONDS}s..."
+            sleep "$SLEEP_SECONDS"
+            ATTEMPT=$((ATTEMPT + 1))
+          done
 
           echo "database_id=$DB_ID" >> "$GITHUB_OUTPUT"
 
