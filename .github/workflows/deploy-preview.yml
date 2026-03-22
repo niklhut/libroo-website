@@ -90,9 +90,6 @@ jobs:
           CF_DEPLOY_ENV: preview
         run: pnpm build
 
-      - name: Stage migrations for Wrangler
-        run: node ./scripts/prepare-wrangler-migrations.mjs
-
       - name: Apply preview D1 migrations
         env:
           CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
@@ -105,7 +102,14 @@ jobs:
         env:
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
         run: |
-          printf '%s' "${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PREVIEW || secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}" \
+          SECRET_VAL="${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PREVIEW || secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}"
+
+          if [ -z "$SECRET_VAL" ]; then
+            echo "Missing NUXT_TURNSTILE_SECRET_KEY_PREVIEW/PRODUCTION; refusing to set an empty runtime secret." >&2
+            exit 1
+          fi
+
+          printf '%s' "$SECRET_VAL" \
             | pnpm dlx wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Deploy preview Worker

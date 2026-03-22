@@ -13,9 +13,9 @@
     "deploy:preview:migrated": "pnpm db:migrate:preview && pnpm deploy:preview",
     "postinstall": "nuxt prepare",
     "db:generate": "drizzle-kit generate",
-    "db:migrate:local": "pnpm build && node ./scripts/prepare-wrangler-migrations.mjs && wrangler d1 migrations apply DB --local --config .output/server/wrangler.json",
-    "db:migrate:remote": "pnpm build && node ./scripts/prepare-wrangler-migrations.mjs && wrangler d1 migrations apply DB --remote --config .output/server/wrangler.json",
-    "db:migrate:preview": "pnpm build && node ./scripts/prepare-wrangler-migrations.mjs && wrangler d1 migrations apply DB --remote --preview --config .output/server/wrangler.json",
+    "db:migrate:local": "pnpm build && wrangler d1 migrations apply DB --local --config .output/server/wrangler.json",
+    "db:migrate:remote": "pnpm build && wrangler d1 migrations apply DB --remote --config .output/server/wrangler.json",
+    "db:migrate:preview": "pnpm build && wrangler d1 migrations apply DB --remote --preview --config .output/server/wrangler.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "nuxt typecheck"
@@ -42,7 +42,7 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.5",
-    "wrangler": "^4.11.1"
+    "wrangler": "^4.76.0"
   },
   "resolutions": {
     "unimport": "4.1.1"

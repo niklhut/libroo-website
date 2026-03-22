@@ -107,7 +107,7 @@ export default defineNuxtConfig({
             database_name: 'libroo-website',
             database_id: resolvedD1DatabaseId,
             preview_database_id: resolvedD1PreviewDatabaseId,
-            migrations_dir: 'server/db/migrations'
+            migrations_dir: 'db/migrations'
           }
         ],
         vars: {

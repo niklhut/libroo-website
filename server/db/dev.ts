@@ -19,6 +19,10 @@ export function getLocalDevDb(): AppDb {
       migrationsFolder: localMigrationsFolder
     })
 
+    // `localDevDb` stores a better-sqlite3 Drizzle client (`sqliteDb`) but this app
+    // expects the D1-shaped `AppDb` type elsewhere. The `as unknown as AppDb` cast is
+    // intentional for local dev ergonomics only: both drivers share the same Drizzle
+    // schema/query builder surface, while production continues to use real D1 bindings.
     localDevDb = sqliteDb as unknown as AppDb
   }
 

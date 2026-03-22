@@ -35,10 +35,26 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           DB_NAME="libroo-preview-pr-${PR_NUMBER}"
 
-          if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > /dev/null 2>&1; then
+          set +e
+          D1_INFO_OUTPUT="$(pnpm dlx wrangler@4 d1 info "$DB_NAME" --json 2>&1)"
+          D1_INFO_STATUS=$?
+          set -e
+
+          if [ "$D1_INFO_STATUS" -eq 0 ]; then
             pnpm dlx wrangler@4 d1 delete "$DB_NAME" --skip-confirmation
           else
-            echo "No preview DB found for $DB_NAME; skipping delete."
+            NORMALIZED_INFO="$(printf '%s' "$D1_INFO_OUTPUT" | tr '[:upper:]' '[:lower:]')"
+            COMPACT_INFO="$(printf '%s' "$D1_INFO_OUTPUT" | tr -d '[:space:]')"
+
+            if echo "$NORMALIZED_INFO" | grep -Eq 'not[[:space:]-]?found|no[[:space:]]+database|unknown[[:space:]]+database'; then
+              echo "No preview DB found for $DB_NAME; skipping delete."
+            elif [ -z "$COMPACT_INFO" ] || [ "$COMPACT_INFO" = '{}' ] || [ "$COMPACT_INFO" = '[]' ] || [ "$COMPACT_INFO" = 'null' ]; then
+              echo "D1 info returned empty result for $DB_NAME; treating as missing DB and skipping delete."
+            else
+              echo "Failed to inspect preview DB $DB_NAME before delete." >&2
+              echo "$D1_INFO_OUTPUT" >&2
+              exit "$D1_INFO_STATUS"
+            fi
           fi
 
       - name: Delete preview Worker

@@ -48,9 +48,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Stage migrations for Wrangler
-        run: node ./scripts/prepare-wrangler-migrations.mjs
-
       - name: Apply production D1 migrations
         run: pnpm dlx wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
 
