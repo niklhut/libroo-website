@@ -23,8 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
-    env:
+  pull-requests: write
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
@@ -117,18 +116,8 @@ jobs:
         run: |
           pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "${{ steps.names.outputs.worker_name }}"
           
-          # Fetch account subdomain from Cloudflare API
-          ACCOUNT_INFO=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json")
-          
-          ACCOUNT_SUBDOMAIN=$(echo "$ACCOUNT_INFO" | jq -r '.result[0].name // .result[0].account.name // empty' | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
-          
-          if [ -z "$ACCOUNT_SUBDOMAIN" ]; then
-            ACCOUNT_SUBDOMAIN="${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
-          fi
-          
           WORKER_NAME="${{ steps.names.outputs.worker_name }}"
+          ACCOUNT_SUBDOMAIN="${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}"
           PREVIEW_URL="https://${WORKER_NAME}.${ACCOUNT_SUBDOMAIN}.workers.dev"
           echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
 
