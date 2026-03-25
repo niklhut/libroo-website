@@ -63,15 +63,7 @@ ensurePreviewD1Isolation()
 
 export default defineNuxtConfig({
 
-  modules: [
-    '@nuxt/eslint',
-    '@nuxt/image',
-    '@nuxt/ui-pro',
-    '@nuxt/content',
-    '@nuxtjs/turnstile',
-    '@nuxtjs/seo',
-    '@nuxt/scripts'
-  ],
+  modules: ['@nuxt/eslint', '@nuxtjs/seo', '@nuxt/image', '@nuxt/ui', '@nuxt/content', '@nuxtjs/turnstile', '@nuxt/scripts', '@nuxt/fonts'],
 
   imports: {
     dirs: [
