@@ -6,6 +6,7 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
+// @ts-expect-error custom og image component
 defineOgImage('OgImageTakumi', {
   title: page.value.seo?.title || page.value.title,
   description: page.value.seo?.description || page.value.description
