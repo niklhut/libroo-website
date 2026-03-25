@@ -8,7 +8,8 @@ export default defineNuxtRouteMiddleware((to) => {
 
       return navigateTo({
         path: to.path,
-        query: otherParams
+        query: otherParams,
+        hash: to.hash
       }, { replace: true })
     }
   }
