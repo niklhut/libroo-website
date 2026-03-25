@@ -6,7 +6,7 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-defineOgImageComponent('OgImage', {
+defineOgImage('OgImageTakumi', {
   title: page.value.seo?.title || page.value.title,
   description: page.value.seo?.description || page.value.description
 })
@@ -42,7 +42,7 @@ const handleClick = (link: { label: string }) => {
       <UColorModeImage
         light="/images/light/line-1.svg"
         dark="/images/dark/line-1.svg"
-        class="absolute pointer-events-none pb-10 left-0 top-0 object-cover h-[650px]"
+        class="absolute pointer-events-none pb-10 left-0 top-0 object-cover h-162.5"
       />
     </div>
 
@@ -92,7 +92,7 @@ const handleClick = (link: { label: string }) => {
       <img
         :src="page.section.images.mobile"
         :alt="page.section.title"
-        class="block lg:hidden 2xl:block 2xl:w-full 2xl:max-w-2xl max-h-[350px]"
+        class="block lg:hidden 2xl:block 2xl:w-full 2xl:max-w-2xl max-h-87.5"
       >
     </UPageSection>
 
@@ -108,8 +108,8 @@ const handleClick = (link: { label: string }) => {
       }"
       class="relative overflow-hidden"
     >
-      <div class="absolute rounded-full -left-10 top-10 size-[300px] z-10 bg-primary opacity-30 blur-[200px]" />
-      <div class="absolute rounded-full -right-10 -bottom-10 size-[300px] z-10 bg-primary opacity-30 blur-[200px]" />
+      <div class="absolute rounded-full -left-10 top-10 size-75 z-10 bg-primary opacity-30 blur-[200px]" />
+      <div class="absolute rounded-full -right-10 -bottom-10 size-75 z-10 bg-primary opacity-30 blur-[200px]" />
       <template #title>
         <MDC
           :value="page.features.title"
