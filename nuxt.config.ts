@@ -78,6 +78,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   site: {
+    url: process.env.NUXT_SITE_URL || 'https://libroo.app',
     name: 'Libroo',
     description: 'Libroo helps you track books you own, manage collections, and keep tabs on loans — all in one simple, open source app.',
     logo: '/favicon-96x96.png'
