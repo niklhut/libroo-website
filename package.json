@@ -21,19 +21,19 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@iconify-json/lucide": "^1.2.100",
-    "@iconify-json/simple-icons": "^1.2.75",
+    "@iconify-json/lucide": "^1.2.101",
+    "@iconify-json/simple-icons": "^1.2.76",
     "@nuxt/content": "^3.12.0",
     "@nuxt/fonts": "0.14.0",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^0.13.2",
-    "@nuxt/ui": "^4.6.0",
+    "@nuxt/ui": "^4.6.1",
     "@nuxtjs/seo": "5.1.0",
     "@nuxtjs/turnstile": "1.1.2",
     "@takumi-rs/core": "^0.73.1",
     "@takumi-rs/wasm": "^0.73.1",
     "better-sqlite3": "^12.8.0",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.1",
     "drizzle-orm": "^0.45.2",
     "nuxt": "^4.4.2",
     "tailwindcss": "^4.2.2",
@@ -43,11 +43,11 @@
     "@nuxt/eslint": "^1.15.2",
     "@types/better-sqlite3": "^7.6.13",
     "drizzle-kit": "^0.31.10",
-    "eslint": "^10.1.0",
+    "eslint": "^10.2.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "vue-tsc": "^3.2.6",
-    "wrangler": "^4.78.0"
+    "wrangler": "^4.80.0"
   },
   "resolutions": {
     "unimport": "4.1.1"
