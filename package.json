@@ -30,7 +30,7 @@
     "@nuxt/ui": "^4.6.1",
     "@nuxtjs/seo": "5.1.0",
     "@nuxtjs/turnstile": "1.1.2",
-    "@takumi-rs/core": "^0.73.1",
+    "@takumi-rs/core": "^1.0.9",
     "@takumi-rs/wasm": "^0.73.1",
     "better-sqlite3": "^12.8.0",
     "dotenv": "^17.4.1",
