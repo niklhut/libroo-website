@@ -144,6 +144,7 @@ jobs:
           CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
           CF_DEPLOY_ENV: preview
+          NUXT_SITE_URL: ${{ steps.names.outputs.site_url }}
         run: |
           ACCOUNT_SUBDOMAIN="${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}"
 
