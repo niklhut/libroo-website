@@ -85,9 +85,7 @@ export default defineNuxtConfig({
   },
 
   mdc: {
-    highlight: {
-      noApiRoute: false
-    }
+    highlight: false
   },
 
   runtimeConfig: {
@@ -172,7 +170,10 @@ export default defineNuxtConfig({
   },
 
   ogImage: {
-    zeroRuntime: true
+    zeroRuntime: true,
+    compatibility: {
+      runtime: { takumi: false }
+    }
   },
 
   scripts: {

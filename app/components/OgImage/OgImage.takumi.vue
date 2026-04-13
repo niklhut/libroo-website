@@ -110,7 +110,7 @@ if (typeof props.icon === 'string' && !runtimeConfig.hasNuxtIcon && import.meta.
         backgroundImage: `radial-gradient(circle, rgba(${themeRgb}, 0.5) 0%,  ${colorMode === 'dark' ? 'rgba(5, 5, 5,0.3)' : 'rgba(255, 255, 255, 0.7)'} 50%, ${props.colorMode === 'dark' ? 'rgba(5, 5, 5,0)' : 'rgba(255, 255, 255, 0)'} 70%)`
       }"
     />
-    <div class="flex flex-row justify-between items-start z-10 w-full relative pt-15 px-15">
+    <div class="flex flex-row justify-between items-start w-full relative pt-15 px-15">
       <div class="flex flex-col w-full max-w-[85%]">
         <h1 class="m-0 font-bold mb-7.5 text-[75px]">
           {{ interpolatedTitle }}
@@ -137,7 +137,7 @@ if (typeof props.icon === 'string' && !runtimeConfig.hasNuxtIcon && import.meta.
         />
       </div>
     </div>
-    <div class="flex flex-row justify-center items-center text-center w-full absolute bottom-15 left-0 z-10">
+    <div class="flex flex-row justify-center items-center text-center w-full absolute bottom-15 left-0">
       <img
         v-if="siteLogo"
         :src="siteLogo"

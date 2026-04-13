@@ -30,7 +30,6 @@ jobs:
       CLOUDFLARE_ACCOUNT_SUBDOMAIN: ${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}
       NUXT_UI_PRO_LICENSE: ${{ secrets.NUXT_UI_PRO_LICENSE }}
       NUXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.NUXT_PUBLIC_TURNSTILE_SITE_KEY }}
-      NUXT_SITE_URL: ${{ vars.NUXT_SITE_URL }}
       NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: ${{ vars.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC }}
       NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: ${{ vars.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID }}
 
@@ -57,9 +56,18 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number || inputs.pr_number }}"
           DB_NAME="libroo-preview-pr-${PR_NUMBER}"
           WORKER_NAME="libroo-preview-pr-${PR_NUMBER}"
+          ACCOUNT_SUBDOMAIN="${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}"
+
+          if [ -z "$ACCOUNT_SUBDOMAIN" ]; then
+            echo "Missing required repository variable CLOUDFLARE_ACCOUNT_SUBDOMAIN; cannot construct preview URL." >&2
+            exit 1
+          fi
+
+          SITE_URL="https://${WORKER_NAME}.${ACCOUNT_SUBDOMAIN}.workers.dev"
           echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
           echo "db_name=${DB_NAME}" >> "$GITHUB_OUTPUT"
           echo "worker_name=${WORKER_NAME}" >> "$GITHUB_OUTPUT"
+          echo "site_url=${SITE_URL}" >> "$GITHUB_OUTPUT"
 
       - name: Ensure preview D1 database exists
         id: preview-db
@@ -112,6 +120,7 @@ jobs:
           CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          NUXT_SITE_URL: ${{ steps.names.outputs.site_url }}
           CF_DEPLOY_ENV: preview
         run: pnpm build
 
@@ -120,12 +129,14 @@ jobs:
           CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          NUXT_SITE_URL: ${{ steps.names.outputs.site_url }}
           CF_DEPLOY_ENV: preview
         run: pnpm dlx wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
 
       - name: Sync preview runtime secrets
         env:
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          NUXT_SITE_URL: ${{ steps.names.outputs.site_url }}
         run: |
           SECRET_VAL="${{ secrets.NUXT_TURNSTILE_SECRET_KEY_PREVIEW || secrets.NUXT_TURNSTILE_SECRET_KEY_PRODUCTION }}"
 
@@ -143,6 +154,7 @@ jobs:
           CLOUDFLARE_D1_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_D1_PREVIEW_DATABASE_ID: ${{ steps.preview-db.outputs.database_id }}
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
+          NUXT_SITE_URL: ${{ steps.names.outputs.site_url }}
           CF_DEPLOY_ENV: preview
         run: |
           ACCOUNT_SUBDOMAIN="${{ vars.CLOUDFLARE_ACCOUNT_SUBDOMAIN }}"
