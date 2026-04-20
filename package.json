@@ -40,13 +40,13 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
     "@types/better-sqlite3": "^7.6.13",
-    "@takumi-rs/core": "^1.0.14",
+    "@takumi-rs/core": "^1.0.15",
     "drizzle-kit": "^0.31.10",
     "eslint": "^10.2.1",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "vue-tsc": "^3.2.7",
-    "wrangler": "^4.83.0"
+    "wrangler": "^4.84.0"
   },
   "resolutions": {
     "unimport": "4.1.1"
