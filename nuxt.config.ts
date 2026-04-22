@@ -178,7 +178,11 @@ export default defineNuxtConfig({
 
   scripts: {
     registry: {
-      umamiAnalytics: true
+      umamiAnalytics: {
+        websiteId: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID || '',
+        trigger: 'onNuxtReady',
+        hostUrl: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC || ''
+      }
     }
   },
 
