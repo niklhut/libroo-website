@@ -48,18 +48,5 @@
     "vue-tsc": "^3.2.8",
     "wrangler": "^4.90.0"
   },
-  "resolutions": {
-    "unimport": "4.1.1"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "better-sqlite3",
-      "esbuild",
-      "sharp",
-      "vue-demi",
-      "workerd"
-    ]
-  },
-  "packageManager": "pnpm@10.33.4"
+  "packageManager": "pnpm@11.1.0"
 }
