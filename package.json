@@ -23,7 +23,7 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.108",
     "@iconify-json/simple-icons": "^1.2.82",
-    "@nuxt/content": "^3.13.0",
+    "@nuxt/content": "^3.14.0",
     "@nuxt/fonts": "0.14.0",
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^1.1.0",
@@ -43,10 +43,10 @@
     "@takumi-rs/core": "^1.2.1",
     "drizzle-kit": "^0.31.10",
     "eslint": "^10.4.0",
-    "tsx": "^4.22.1",
+    "tsx": "^4.22.2",
     "typescript": "^6.0.3",
     "vue-tsc": "^3.3.0",
     "wrangler": "^4.92.0"
   },
-  "packageManager": "pnpm@11.1.2"
+  "packageManager": "pnpm@11.1.3"
 }
