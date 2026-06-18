@@ -9,6 +9,13 @@ const isDeployRun = ['production', 'preview'].includes(deployEnv)
 const placeholderDatabaseId = '00000000-0000-0000-0000-000000000000'
 const resolvedD1DatabaseId = d1DatabaseId || placeholderDatabaseId
 const resolvedD1PreviewDatabaseId = d1PreviewDatabaseId || resolvedD1DatabaseId
+const legalRuntimeVars = {
+  NUXT_LEGAL_IMPRINT_REDIRECT_URL: process.env.NUXT_LEGAL_IMPRINT_REDIRECT_URL || '',
+  NUXT_LEGAL_IMPRINT_MARKDOWN_URL: process.env.NUXT_LEGAL_IMPRINT_MARKDOWN_URL || '',
+  NUXT_LEGAL_PRIVACY_REDIRECT_URL: process.env.NUXT_LEGAL_PRIVACY_REDIRECT_URL || '',
+  NUXT_LEGAL_PRIVACY_MARKDOWN_URL: process.env.NUXT_LEGAL_PRIVACY_MARKDOWN_URL || '',
+  NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL: process.env.NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL || ''
+}
 
 type ProductionRoute = {
   pattern: string
@@ -85,10 +92,24 @@ export default defineNuxtConfig({
   },
 
   mdc: {
+    headings: {
+      anchorLinks: false
+    },
     highlight: false
   },
 
   runtimeConfig: {
+    legal: {
+      clientPlaceholdersUrl: legalRuntimeVars.NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL,
+      imprint: {
+        redirectUrl: legalRuntimeVars.NUXT_LEGAL_IMPRINT_REDIRECT_URL,
+        markdownUrl: legalRuntimeVars.NUXT_LEGAL_IMPRINT_MARKDOWN_URL
+      },
+      privacy: {
+        redirectUrl: legalRuntimeVars.NUXT_LEGAL_PRIVACY_REDIRECT_URL,
+        markdownUrl: legalRuntimeVars.NUXT_LEGAL_PRIVACY_MARKDOWN_URL
+      }
+    },
     turnstile: {
       secretKey: ''
     },
@@ -105,6 +126,12 @@ export default defineNuxtConfig({
         siteKey: ''
       }
     }
+  },
+
+  routeRules: {
+    '/imprint': { prerender: false },
+    '/privacy': { prerender: false },
+    '/api/legal/**': { prerender: false }
   },
 
   compatibilityDate: '2025-03-13',
@@ -132,7 +159,8 @@ export default defineNuxtConfig({
           NUXT_SITE_URL: process.env.NUXT_SITE_URL,
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC,
           // Use an empty string for optional vars.
-          NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID || ''
+          NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID || '',
+          ...legalRuntimeVars
         },
         observability: {
           logs: {
@@ -197,5 +225,9 @@ export default defineNuxtConfig({
       colorScheme: 'dark light',
       applicationName: 'Libroo'
     }
+  },
+
+  sitemap: {
+    exclude: ['/imprint', '/privacy']
   }
 })

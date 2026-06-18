@@ -11,6 +11,7 @@ You can find the main libroo repository [here](https://github.com/niklhut/libroo
 - Early-access signup modal with email capture
 - Spam protection via Cloudflare Turnstile
 - Privacy-friendly analytics using [Umami](https://umami.is)
+- Configurable legal pages without repository-bundled legal text
 
 ## 🚀 Tech Stack
 
@@ -59,6 +60,9 @@ pnpm wrangler d1 create libroo-website
 - `NUXT_SITE_URL`
 - `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC`
 - `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID` (optional)
+- `NUXT_LEGAL_IMPRINT_REDIRECT_URL` or `NUXT_LEGAL_IMPRINT_MARKDOWN_URL` (optional)
+- `NUXT_LEGAL_PRIVACY_REDIRECT_URL` or `NUXT_LEGAL_PRIVACY_MARKDOWN_URL` (optional)
+- `NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL` (optional)
 
 1. Workflows.
 
@@ -86,6 +90,32 @@ pnpm deploy
 ```
 
 For local `pnpm dev`, the app applies Drizzle migrations for the local sqlite fallback on server startup.
+
+## Legal Pages
+
+The `/imprint` and `/privacy` routes are intentionally configurable and do not ship legal copy in this repository.
+
+Each page supports two modes:
+
+- Set `NUXT_LEGAL_IMPRINT_REDIRECT_URL` or `NUXT_LEGAL_PRIVACY_REDIRECT_URL` to redirect visitors to an external legal page.
+- Set `NUXT_LEGAL_IMPRINT_MARKDOWN_URL` or `NUXT_LEGAL_PRIVACY_MARKDOWN_URL` to fetch and render markdown from an HTTPS URL.
+
+Redirect URLs take precedence over markdown URLs. If neither variable is set, the route renders a neutral unconfigured message.
+
+Markdown URLs can point to any public HTTPS source, for example a public Cloudflare R2 object, S3 object, GitHub raw file, or a small Cloudflare Worker endpoint that reads from KV/R2 and returns markdown. Keeping the markdown outside environment variables avoids Worker variable size limits and keeps deployment-specific legal text out of the open-source repository.
+
+Markdown pages can also contain client-rendered placeholders for contact details that should not be present in the initial server-rendered HTML. Add tokens like `{{LEGAL_CONTROLLER_NAME}}`, `{{LEGAL_CONTROLLER_ADDRESS}}`, `{{LEGAL_CONTACT_EMAIL}}`, or `{{LEGAL_CONTACT_PHONE}}` to the markdown, then set `NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL` to a public HTTPS JSON object:
+
+```json
+{
+  "LEGAL_CONTROLLER_NAME": "Example Name",
+  "LEGAL_CONTROLLER_ADDRESS": "Street 1\n12345 City\nCountry",
+  "LEGAL_CONTACT_EMAIL": "hello@example.com",
+  "LEGAL_CONTACT_PHONE": "+49 000 000000"
+}
+```
+
+During SSR those tokens are replaced with neutral fallback text. After the page hydrates in the browser, the app fetches `/api/legal/placeholders` and renders the configured values. This is crawler friction, not access control: clients that run JavaScript or fetch the JSON/API directly can still read the contact data.
 
 ## 📜 License
 

@@ -14,15 +14,22 @@ interface CloudflareRuntimeGlobal {
   __cf_env__?: Partial<Env>
 }
 
+interface CloudflareEventContext {
+  cloudflare?: {
+    env?: Partial<Env>
+  }
+}
+
 export function createDb(env: Env): AppDb {
   return drizzleD1(env.DB, { schema })
 }
 
 function getCloudflareEnv(event: H3Event): Env | undefined {
   const runtimeGlobal = globalThis as typeof globalThis & CloudflareRuntimeGlobal
+  const context = event.context as H3Event['context'] & CloudflareEventContext
 
   const candidates: Array<Partial<Env> | undefined> = [
-    event.context.cloudflare?.env as Partial<Env> | undefined,
+    context.cloudflare?.env,
     runtimeGlobal.__env__,
     runtimeGlobal.__cf_env__
   ]
@@ -34,8 +41,9 @@ function getCloudflareEnv(event: H3Event): Env | undefined {
 
 function getResolvedCloudflareEnvKeys(event: H3Event): string[] {
   const runtimeGlobal = globalThis as typeof globalThis & CloudflareRuntimeGlobal
+  const context = event.context as H3Event['context'] & CloudflareEventContext
   const candidates: Array<Partial<Env> | undefined> = [
-    event.context.cloudflare?.env as Partial<Env> | undefined,
+    context.cloudflare?.env,
     runtimeGlobal.__env__,
     runtimeGlobal.__cf_env__
   ]

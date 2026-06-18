@@ -31,3 +31,6 @@ local.db
 
 # Cloudflare local state
 .wrangler
+
+# Deployment-local legal documents and placeholder data
+/legal/
