@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const redirectUrl = legalConfig?.redirectUrl?.trim()
   const markdownUrl = legalConfig?.markdownUrl?.trim()
 
-  setResponseHeader(event, 'Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
+  setLegalCacheHeaders(event)
 
   if (redirectUrl) {
     assertLegalFetchableUrl(redirectUrl, `NUXT_LEGAL_${page.toUpperCase()}_REDIRECT_URL`)
