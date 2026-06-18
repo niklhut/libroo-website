@@ -4,12 +4,12 @@ const { proxy } = useScriptUmamiAnalytics()
 const items = [
   {
     label: 'Imprint',
-    to: 'https://niklhut.com/imprint',
+    to: '/imprint',
     onclick: () => proxy.track('footer', { action: 'imprint' })
   },
   {
     label: 'Privacy Policy',
-    to: 'https://niklhut.com/privacy',
+    to: '/privacy',
     onclick: () => proxy.track('footer', { action: 'privacy' })
   }
 ]

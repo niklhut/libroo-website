@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const validationResponse = await verifyTurnstileToken(body.token)
 
   if (!validationResponse.success) {
-    return sendError(event, createError({ statusCode: 403, message: 'Turnstile verification failed' }))
+    throw createError({ statusCode: 403, message: 'Turnstile verification failed' })
   }
 
   const existing = await db.select().from(waitlist).where(eq(waitlist.email, body.email)).get()
@@ -22,6 +22,6 @@ export default defineEventHandler(async (event) => {
     await db.insert(waitlist).values({ email: body.email })
     return { success: true }
   } catch {
-    return sendError(event, createError({ statusCode: 500, message: 'Could not add to waitlist' }))
+    throw createError({ statusCode: 500, message: 'Could not add to waitlist' })
   }
 })

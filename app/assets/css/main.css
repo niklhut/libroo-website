@@ -38,3 +38,59 @@
 html {
   scroll-behavior: smooth;
 }
+
+.legal-markdown {
+  color: var(--ui-text);
+  line-height: 1.75;
+}
+
+.legal-markdown :where(h1, h2, h3) {
+  color: var(--ui-text-highlighted);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 2rem 0 0.75rem;
+}
+
+.legal-markdown :where(h1, h2, h3) :where(a[href^="#"]) {
+  color: inherit !important;
+  pointer-events: none;
+  text-decoration: none !important;
+}
+
+.legal-markdown :where(h1, h2, h3) :where(a[href^="#"] > span:first-child) {
+  display: none !important;
+}
+
+.legal-markdown :where(h1) {
+  font-size: 2rem;
+}
+
+.legal-markdown :where(h2) {
+  font-size: 1.5rem;
+}
+
+.legal-markdown :where(h3) {
+  font-size: 1.25rem;
+}
+
+.legal-markdown :where(p, ul, ol, blockquote, table) {
+  margin: 1rem 0;
+}
+
+.legal-markdown :where(ul, ol) {
+  padding-left: 1.5rem;
+}
+
+.legal-markdown :where(ul) {
+  list-style: disc;
+}
+
+.legal-markdown :where(ol) {
+  list-style: decimal;
+}
+
+.legal-markdown :where(a) {
+  color: var(--ui-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
