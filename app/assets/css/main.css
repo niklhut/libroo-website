@@ -51,13 +51,13 @@ html {
   margin: 2rem 0 0.75rem;
 }
 
-.legal-markdown :where(h1, h2, h3) :where(a) {
+.legal-markdown :where(h1, h2, h3) :where(a[href^="#"]) {
   color: inherit !important;
   pointer-events: none;
   text-decoration: none !important;
 }
 
-.legal-markdown :where(h1, h2, h3) :where(a > span:first-child) {
+.legal-markdown :where(h1, h2, h3) :where(a[href^="#"] > span:first-child) {
   display: none !important;
 }
 

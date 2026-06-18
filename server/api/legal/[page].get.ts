@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const redirectUrl = legalConfig?.redirectUrl?.trim()
   const markdownUrl = legalConfig?.markdownUrl?.trim()
 
-  event.node?.res?.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
+  setResponseHeader(event, 'Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
 
   if (redirectUrl) {
     assertLegalFetchableUrl(redirectUrl, `NUXT_LEGAL_${page.toUpperCase()}_REDIRECT_URL`)
@@ -52,20 +52,31 @@ export default defineEventHandler(async (event) => {
   }
 
   const sourceUrl = assertLegalFetchableUrl(markdownUrl, `NUXT_LEGAL_${page.toUpperCase()}_MARKDOWN_URL`)
-  const response = await fetch(sourceUrl, {
+  const markdownLoadError = `Could not load ${labels[page].toLowerCase()} markdown.`
+  const response = await fetchLegalSource(sourceUrl, {
     headers: {
       accept: 'text/markdown, text/plain, */*'
     }
-  })
+  }, markdownLoadError)
 
   if (!response.ok) {
     throw createError({
       statusCode: 502,
-      statusMessage: `Could not load ${labels[page].toLowerCase()} markdown.`
+      statusMessage: markdownLoadError
     })
   }
 
-  const markdown = await response.text()
+  let markdown: string
+
+  try {
+    markdown = await response.text()
+  } catch {
+    throw createError({
+      statusCode: 502,
+      statusMessage: markdownLoadError
+    })
+  }
+
   const markdownWithPlaceholderMarkers = markdown.replace(placeholderPattern, (_match, key: string) => {
     return `<span data-legal-placeholder="${key}"></span>`
   })
@@ -77,6 +88,15 @@ export default defineEventHandler(async (event) => {
   const hasPlaceholders = hasPlaceholderPattern.test(markdown)
   const query = getQuery(event)
   const includePlaceholders = query.includePlaceholders === '1'
+  let placeholders: Awaited<ReturnType<typeof fetchLegalPlaceholders>> | undefined
+
+  if (hasPlaceholders && includePlaceholders) {
+    try {
+      placeholders = await fetchLegalPlaceholders(event)
+    } catch {
+      placeholders = {}
+    }
+  }
 
   return {
     type: 'markdown',
@@ -85,8 +105,6 @@ export default defineEventHandler(async (event) => {
     data: parsedMarkdown.data,
     hasPlaceholders,
     markdownLength: markdown.length,
-    placeholders: hasPlaceholders && includePlaceholders
-      ? await fetchLegalPlaceholders(event)
-      : undefined
+    placeholders
   }
 })

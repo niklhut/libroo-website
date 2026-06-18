@@ -58,7 +58,10 @@ function loadPlaceholders() {
   }
 
   placeholderFetchPromise ||= $fetch<LegalPlaceholderMap>('/api/legal/placeholders')
-    .catch(() => ({}))
+    .catch(() => {
+      placeholderFetchPromise = undefined
+      return {}
+    })
 
   return placeholderFetchPromise
 }
