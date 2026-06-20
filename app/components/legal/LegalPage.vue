@@ -66,11 +66,61 @@ function loadPlaceholders() {
   return placeholderFetchPromise
 }
 
+function getLegalPlaceholderHref(key: string, value: string) {
+  const trimmedValue = value.trim()
+
+  if (!trimmedValue) {
+    return undefined
+  }
+
+  if (key.endsWith('_EMAIL')) {
+    return `mailto:${trimmedValue}`
+  }
+
+  if (key.endsWith('_PHONE')) {
+    const phoneHref = trimmedValue.replace(/[^\d+*#]/g, '')
+
+    return phoneHref ? `tel:${phoneHref}` : undefined
+  }
+
+  return undefined
+}
+
+function createLegalPlaceholderNode(key: string, value: string) {
+  const href = getLegalPlaceholderHref(key, value)
+
+  if (!href) {
+    return window.document.createTextNode(value)
+  }
+
+  const link = window.document.createElement('a')
+  link.href = href
+  link.textContent = value
+
+  return link
+}
+
 function replacePlaceholderMarkers(node: Node, placeholders: LegalPlaceholderMap) {
   if (node.nodeType === Node.TEXT_NODE && node.textContent?.includes(placeholderMarkerPrefix)) {
-    node.textContent = node.textContent.replace(placeholderMarkerPattern, (_match, key: string) => {
-      return placeholders[key] || ''
+    const fragment = window.document.createDocumentFragment()
+    let lastIndex = 0
+
+    node.textContent.replace(placeholderMarkerPattern, (match, key: string, offset: number) => {
+      if (offset > lastIndex) {
+        fragment.append(window.document.createTextNode(node.textContent!.slice(lastIndex, offset)))
+      }
+
+      fragment.append(createLegalPlaceholderNode(key, placeholders[key] || ''))
+      lastIndex = offset + match.length
+
+      return match
     })
+
+    if (lastIndex < node.textContent.length) {
+      fragment.append(window.document.createTextNode(node.textContent.slice(lastIndex)))
+    }
+
+    node.parentNode?.replaceChild(fragment, node)
 
     return
   }
@@ -84,7 +134,9 @@ function fillPlaceholderElements(element: HTMLElement, placeholders: LegalPlaceh
   placeholderElements.forEach((placeholderElement) => {
     const key = placeholderElement.dataset.legalPlaceholder
 
-    placeholderElement.textContent = key ? placeholders[key] || '' : ''
+    placeholderElement.replaceChildren(
+      key ? createLegalPlaceholderNode(key, placeholders[key] || '') : ''
+    )
   })
 
   return placeholderElements.length > 0
