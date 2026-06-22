@@ -17,6 +17,8 @@ const createLinkSchema = () => z.object({
   target: createEnum(['_blank', '_self']).optional(),
   color: createEnum(['primary', 'secondary', 'neutral', 'error', 'warning', 'success', 'info']).optional(),
   variant: createEnum(['solid', 'outline', 'subtle', 'soft', 'ghost', 'link']).optional()
+}).refine(link => Boolean(link.to || link.appPath), {
+  message: 'Either "to" or "appPath" must be provided'
 })
 
 const createFeatureSchema = () => createBaseSchema().extend({
@@ -52,8 +54,7 @@ export const collections = {
       }),
       cta: createBaseSchema().extend({
         links: z.array(createLinkSchema())
-      }),
-      waitlistModal: createBaseSchema().optional()
+      })
     })
   })
 }

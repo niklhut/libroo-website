@@ -56,6 +56,7 @@ const trackHeaderClick = (label: string) => {
       <UButton
         :to="loginUrl"
         target="_blank"
+        rel="noopener noreferrer"
         icon="i-lucide-log-in"
         variant="subtle"
         class="hidden lg:inline-flex"
@@ -75,6 +76,7 @@ const trackHeaderClick = (label: string) => {
         class="mt-4"
         :to="loginUrl"
         target="_blank"
+        rel="noopener noreferrer"
         label="Log in"
         icon="i-lucide-log-in"
         variant="subtle"
@@ -85,6 +87,7 @@ const trackHeaderClick = (label: string) => {
         class="mt-2"
         :to="appUrl"
         target="_blank"
+        rel="noopener noreferrer"
         label="Open app"
         icon="i-lucide-library"
         color="neutral"

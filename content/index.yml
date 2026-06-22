@@ -94,7 +94,3 @@ cta:
       color: neutral
       variant: subtle
       size: xl
-
-waitlistModal:
-  title: Get Libroo updates
-  description: Enter your email and be the first to know about new Libroo releases. We won't spam you, we promise.
