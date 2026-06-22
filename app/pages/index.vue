@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import WaitlistModal from '~/components/WaitlistModal.vue'
-
 const { data: page } = await useAsyncData('index', () => queryCollection('content').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
@@ -19,18 +17,37 @@ useSeoMeta({
   ogDescription: page.value.seo?.description || page.value.description
 })
 
-const overlay = useOverlay()
 const { proxy } = useScriptUmamiAnalytics()
-const modal = overlay.create(WaitlistModal)
+const runtimeConfig = useRuntimeConfig()
+const appUrl = computed(() => String(runtimeConfig.public.librooAppUrl || 'https://app.libroo.app').replace(/\/$/, ''))
 
-const handleClick = (link: { label: string }) => {
-  if (link.label === 'Notify Me') {
-    modal.open({
-      title: page.value?.waitlistModal.title ?? '',
-      description: page.value?.waitlistModal.description ?? ''
-    })
+type PageLink = {
+  label: string
+  appPath?: string
+  to?: string
+}
+
+const resolveAppLink = <T extends PageLink>(link: T) => {
+  const { appPath, ...buttonLink } = link
+
+  if (!appPath) {
+    return buttonLink
   }
-  proxy.track('hero', { name: String(link.label) })
+
+  return {
+    ...buttonLink,
+    to: `${appUrl.value}${appPath.startsWith('/') ? appPath : `/${appPath}`}`
+  }
+}
+
+const heroLinks = computed(() => page.value?.hero.links.map(resolveAppLink) ?? [])
+const ctaLinks = computed(() => page.value?.cta.links.map(resolveAppLink) ?? [])
+
+const handleClick = (link: { label: string }, source: 'hero' | 'cta') => {
+  proxy.track('cta_click', {
+    source,
+    label: String(link.label)
+  })
 }
 </script>
 
@@ -49,7 +66,7 @@ const handleClick = (link: { label: string }) => {
 
     <UPageHero
       :description="page.description"
-      :links="page.hero.links"
+      :links="heroLinks"
       :ui="{ container: 'md:pt-18 lg:pt-20' }"
     >
       <template #title>
@@ -61,10 +78,10 @@ const handleClick = (link: { label: string }) => {
 
       <template #links>
         <UButton
-          v-for="(link, index) in page.hero.links"
+          v-for="(link, index) in heroLinks"
           :key="index"
           v-bind="link"
-          @click="handleClick(link)"
+          @click="handleClick(link, 'hero')"
         />
       </template>
     </UPageHero>
@@ -153,10 +170,10 @@ const handleClick = (link: { label: string }) => {
 
       <template #links>
         <UButton
-          v-for="(link, index) in page.cta.links"
+          v-for="(link, index) in ctaLinks"
           :key="index"
           v-bind="link"
-          @click="handleClick(link)"
+          @click="handleClick(link, 'cta')"
         />
       </template>
 

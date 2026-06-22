@@ -47,6 +47,7 @@ function onClick() {
         color="neutral"
         to="https://github.com/niklhut/libroo"
         target="_blank"
+        aria-label="Libroo on GitHub"
         @click="onClick"
       />
     </template>

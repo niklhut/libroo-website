@@ -1,12 +1,25 @@
 seo:
-  title: Libroo – Your Personal Library Organizer
-  description: Track books, manage collections, and remember who you’ve lent them to — with Libroo.
+  title: Libroo – Private Library Management for Real Bookshelves
+  description: Catalog books, map shelf locations, track reading progress, manage loans, and run your own private library with Libroo.
 
-title: 📚 Your personal library, [organized]{.text-primary}
-description: Libroo helps you track books you own, manage collections, and keep tabs on loans — all in one simple, open source app.
+title: Your physical library, [under control]{.text-primary}
+description: Libroo is a private, open source library manager for home collections and small libraries. Catalog books, organize shelves, track loans, and keep each book easy to find.
 
 hero:
   links:
+    - label: Log in
+      icon: i-lucide-log-in
+      trailing: true
+      variant: solid
+      size: xl
+      appPath: /login
+      target: _blank
+    - label: Open app
+      icon: i-lucide-library
+      variant: subtle
+      size: xl
+      appPath: /
+      target: _blank
     - label: GitHub
       icon: i-simple-icons-github
       size: xl
@@ -14,62 +27,74 @@ hero:
       variant: ghost
       to: https://github.com/niklhut/libroo
       target: _blank
-    - label: Notify Me
-      icon: i-lucide-mail
-      trailing: true
-      variant: subtle
-      size: xl
 
 section:
-  title: '[Take control]{.text-primary} of your bookshelf'
-  description: Libroo brings clarity to your reading life. Whether you lend books to friends or simply want to track what’s on your shelves, it’s designed to stay out of your way and do the job.
+  title: '[Built for shelves, rooms, boxes, and borrowers]{.text-primary}'
+  description: Libroo models the way physical libraries actually work. Add books quickly, place them in real locations, record the details that matter, and see what is home, borrowed, or missing at a glance.
   images:
     mobile: '/images/bookshelves.svg'
     desktop: '/images/bookshelves.svg'
   features:
-    - title: Track your library
-      description: Add and organize all your books with metadata pulled from Open Library. Keep your digital shelf in sync with your real one.
+    - title: Fast cataloging
+      description: Look up books by ISBN, scan barcodes with your camera, paste bulk ISBN lists, import CSV files, or enter books manually when metadata is not available.
       class: border-l border-primary pl-4
-    - title: Lending made simple
-      description: Never forget who borrowed your book. Record and manage loans with one click.
+    - title: Physical locations
+      description: Create nested locations for rooms, shelves, boxes, or carts, then filter and sort your catalog by exactly where each book lives.
       class: border-l border-default pt-4 pl-4
-    - title: Lightweight and local-first
-      description: Libroo is built for privacy and simplicity. Your data stays yours.
+    - title: Private by design
+      description: Run Libroo as your own private instance, invite only the people who need access, and keep your library data under your control.
       class: border-l border-default pt-4 pl-4
 
 features:
-  title: Everything you need to [track your books]{.text-primary}
-  description: Libroo focuses on the essentials — clean, simple features that make organizing books a joy.
+  title: Everything you need to [run a small library]{.text-primary}
+  description: Libroo is ready for everyday cataloging, lending, administration, and self-hosted operation.
   features:
-    - title: Smart book lookup
-      description: Instantly fetch book details using the Open Library API.
-      icon: i-lucide-search
-    - title: Collection management
-      description: Group your books into collections like “To Read”, “Favorites”, or custom categories.
-      icon: i-lucide-layers
+    - title: ISBN lookup and scanning
+      description: Fetch book details from Open Library, scan barcodes from a phone or laptop camera, and review bulk scan results before adding them.
+      icon: i-lucide-scan-barcode
+    - title: Rich book records
+      description: Store authors, cover images, tags, notes, ratings, reading status, reading progress, and custom location data for every title.
+      icon: i-lucide-book-open-check
+    - title: Search and filters
+      description: Find books by title, author, tag, loan state, reading state, location, or location descendants, with useful sorting for real shelf work.
+      icon: i-lucide-list-filter
     - title: Loan tracking
-      description: Keep track of who borrowed what — and when it’s due back.
-      icon: i-lucide-user-check
-    - title: Clean, responsive UI
-      description: Built with Nuxt UI for a fast, elegant interface on desktop and mobile.
-      icon: i-lucide-layout-dashboard
-    - title: Open source & AGPL
-      description: Libroo is free and open under the AGPL license. Contribute or self-host easily.
-      icon: i-lucide-github
-    - title: Built with modern tools
-      description: Uses Nuxt 3, Drizzle ORM, Postgres, and Vue 3 — production-grade from day one.
-      icon: i-lucide-cpu
+      description: Record books you loan out, mark returns, and share borrower invite links so people can see what has been lent to them.
+      icon: i-lucide-handshake
+    - title: Import and export
+      description: Move library data in and out with CSV import and export workflows, useful for first setup, backups, and migrations.
+      icon: i-lucide-file-spreadsheet
+    - title: Admin controls
+      description: Manage registration, invites, roles, bans, audit logs, email verification, password reset, and first-admin setup from the app.
+      icon: i-lucide-shield-check
+    - title: Email workflows
+      description: Send invites, verification emails, password resets, and security notifications through SMTP or Plunk when your instance needs them.
+      icon: i-lucide-mail-check
+    - title: Self-host or deploy
+      description: Run Libroo with Docker and SQLite-compatible storage, or deploy the hosted Cloudflare/NuxtHub profile with D1 and blob storage.
+      icon: i-lucide-server
+    - title: Open source AGPL
+      description: Libroo is free software under the AGPL, built with Nuxt, Better Auth, Drizzle, Effect, and SQLite-compatible storage.
+      icon: i-simple-icons-github
 
 cta:
-  title: Want to try Libroo when it's ready?
-  description: Enter your email and be the first to know when Libroo is available.
+  title: Ready to open your library?
+  description: Sign in to the hosted app, or use the source code and deployment docs to run Libroo for your own collection.
   links:
-    - label: Notify Me
-      to: '#notify'
-      icon: i-lucide-mail
+    - label: Log in
+      appPath: /login
+      target: _blank
+      icon: i-lucide-log-in
+      variant: solid
+      size: xl
+    - label: View source
+      to: https://github.com/niklhut/libroo
+      target: _blank
+      icon: i-simple-icons-github
+      color: neutral
       variant: subtle
       size: xl
 
 waitlistModal:
-  title: Want to try Libroo when it's ready?
-  description: Enter your email and be the first to know when Libroo is available. We won't spam you, we promise.
+  title: Get Libroo updates
+  description: Enter your email and be the first to know about new Libroo releases. We won't spam you, we promise.
