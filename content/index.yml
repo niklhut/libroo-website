@@ -6,6 +6,9 @@ title: Your physical library, [under control]{.text-primary}
 description: Libroo is a private, open source library manager for home collections and small libraries. Catalog books, organize shelves, track loans, and keep each book easy to find.
 
 hero:
+  badge:
+    label: Early release
+    icon: i-lucide-sparkles
   links:
     - label: Log in
       icon: i-lucide-log-in
@@ -80,6 +83,7 @@ features:
 cta:
   title: Ready to open your library?
   description: Sign in to the hosted app, or use the source code and deployment docs to run Libroo for your own collection.
+  note: 'Early release: usable today, with active work on smoother hosting, richer library workflows, and day-to-day polish.'
   links:
     - label: Log in
       appPath: /login

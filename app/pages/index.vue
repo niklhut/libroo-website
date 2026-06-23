@@ -40,8 +40,8 @@ const resolveAppLink = <T extends PageLink>(link: T) => {
   }
 }
 
-const heroLinks = computed(() => page.value?.hero.links.map(resolveAppLink) ?? [])
-const ctaLinks = computed(() => page.value?.cta.links.map(resolveAppLink) ?? [])
+const heroLinks = computed(() => page.value?.hero?.links?.map(resolveAppLink) ?? [])
+const ctaLinks = computed(() => page.value?.cta?.links?.map(resolveAppLink) ?? [])
 
 const handleClick = (link: { label: string }, source: 'hero' | 'cta') => {
   proxy.track('cta_click', {
@@ -60,7 +60,7 @@ const handleClick = (link: { label: string }, source: 'hero' | 'cta') => {
       <UColorModeImage
         light="/images/light/line-1.svg"
         dark="/images/dark/line-1.svg"
-        class="absolute pointer-events-none pb-10 left-0 top-0 object-cover h-162.5"
+        class="absolute pointer-events-none pb-10 left-0 top-12 object-cover h-162.5"
       />
     </div>
 
@@ -69,6 +69,20 @@ const handleClick = (link: { label: string }, source: 'hero' | 'cta') => {
       :links="heroLinks"
       :ui="{ container: 'md:pt-18 lg:pt-20' }"
     >
+      <template
+        v-if="page.hero.badge"
+        #headline
+      >
+        <UBadge
+          :icon="page.hero.badge.icon"
+          color="neutral"
+          variant="subtle"
+          size="lg"
+        >
+          {{ page.hero.badge.label }}
+        </UBadge>
+      </template>
+
       <template #title>
         <MDC
           :value="page.title"
@@ -147,7 +161,9 @@ const handleClick = (link: { label: string }, source: 'hero' | 'cta') => {
 
     <UPageCTA
       id="notify"
-      v-bind="page.cta"
+      :title="page.cta.title"
+      :description="page.cta.description"
+      :links="ctaLinks"
       variant="naked"
       class="overflow-hidden @container"
     >
@@ -165,6 +181,18 @@ const handleClick = (link: { label: string }, source: 'hero' | 'cta') => {
             dark="/images/dark/line-7.svg"
             class="absolute right-0 bottom-0 h-full"
           />
+        </div>
+      </template>
+
+      <template #description>
+        <div class="space-y-3">
+          <p>{{ page.cta.description }}</p>
+          <p
+            v-if="page.cta.note"
+            class="text-sm text-muted"
+          >
+            {{ page.cta.note }}
+          </p>
         </div>
       </template>
 

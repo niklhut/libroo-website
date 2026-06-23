@@ -34,6 +34,10 @@ export const collections = {
     type: 'page',
     schema: z.object({
       hero: z.object({
+        badge: z.object({
+          label: z.string().nonempty(),
+          icon: z.string().optional().editor({ input: 'icon' })
+        }).optional(),
         links: z.array(createLinkSchema())
       }),
       section: createBaseSchema().extend({
@@ -53,6 +57,7 @@ export const collections = {
         features: z.array(createFeatureSchema())
       }),
       cta: createBaseSchema().extend({
+        note: z.string().optional(),
         links: z.array(createLinkSchema())
       })
     })
