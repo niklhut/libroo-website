@@ -11,6 +11,11 @@ const items = [
     label: 'Privacy Policy',
     to: '/privacy',
     onclick: () => proxy.track('footer', { action: 'privacy' })
+  },
+  {
+    label: 'Terms of Service',
+    to: '/terms',
+    onclick: () => proxy.track('footer', { action: 'terms' })
   }
 ]
 

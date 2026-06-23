@@ -14,6 +14,8 @@ const legalRuntimeVars = {
   NUXT_LEGAL_IMPRINT_MARKDOWN_URL: process.env.NUXT_LEGAL_IMPRINT_MARKDOWN_URL || '',
   NUXT_LEGAL_PRIVACY_REDIRECT_URL: process.env.NUXT_LEGAL_PRIVACY_REDIRECT_URL || '',
   NUXT_LEGAL_PRIVACY_MARKDOWN_URL: process.env.NUXT_LEGAL_PRIVACY_MARKDOWN_URL || '',
+  NUXT_LEGAL_TERMS_REDIRECT_URL: process.env.NUXT_LEGAL_TERMS_REDIRECT_URL || '',
+  NUXT_LEGAL_TERMS_MARKDOWN_URL: process.env.NUXT_LEGAL_TERMS_MARKDOWN_URL || '',
   NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL: process.env.NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL || ''
 }
 
@@ -108,6 +110,10 @@ export default defineNuxtConfig({
       privacy: {
         redirectUrl: legalRuntimeVars.NUXT_LEGAL_PRIVACY_REDIRECT_URL,
         markdownUrl: legalRuntimeVars.NUXT_LEGAL_PRIVACY_MARKDOWN_URL
+      },
+      terms: {
+        redirectUrl: legalRuntimeVars.NUXT_LEGAL_TERMS_REDIRECT_URL,
+        markdownUrl: legalRuntimeVars.NUXT_LEGAL_TERMS_MARKDOWN_URL
       }
     },
     turnstile: {
@@ -131,6 +137,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/imprint': { prerender: false },
     '/privacy': { prerender: false },
+    '/terms': { prerender: false },
     '/api/legal/**': { prerender: false }
   },
 
@@ -228,6 +235,6 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
-    exclude: ['/imprint', '/privacy']
+    exclude: ['/imprint', '/privacy', '/terms']
   }
 })
