@@ -8,6 +8,8 @@
 }
 
 :root {
+  --ui-radius: 0rem;
+
   --color-royal-blue-50: #f2f5fc;
   --color-royal-blue-100: #e1e8f8;
   --color-royal-blue-200: #cbd8f2;

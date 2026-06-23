@@ -89,7 +89,7 @@ export default defineNuxtConfig({
   site: {
     url: process.env.NUXT_SITE_URL || 'https://libroo.app',
     name: 'Libroo',
-    description: 'Libroo helps you track books you own, manage collections, and keep tabs on loans — all in one simple, open source app.',
+    description: 'Libroo is a private, open source library manager for home collections and small libraries.',
     logo: '/favicon-96x96.png'
   },
 
@@ -120,6 +120,7 @@ export default defineNuxtConfig({
       secretKey: ''
     },
     public: {
+      librooAppUrl: process.env.NUXT_PUBLIC_LIBROO_APP_URL || 'https://app.libroo.app',
       scripts: {
         umamiAnalytics: {
           scriptInput: {
@@ -163,6 +164,7 @@ export default defineNuxtConfig({
         ],
         vars: {
           NUXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY,
+          NUXT_PUBLIC_LIBROO_APP_URL: process.env.NUXT_PUBLIC_LIBROO_APP_URL || 'https://app.libroo.app',
           NUXT_SITE_URL: process.env.NUXT_SITE_URL,
           NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC: process.env.NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_SCRIPT_INPUT_SRC,
           // Use an empty string for optional vars.

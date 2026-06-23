@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import WaitlistModal from '~/components/WaitlistModal.vue'
-
 const { data: page } = await useAsyncData('index', () => queryCollection('content').first())
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
@@ -19,18 +17,37 @@ useSeoMeta({
   ogDescription: page.value.seo?.description || page.value.description
 })
 
-const overlay = useOverlay()
 const { proxy } = useScriptUmamiAnalytics()
-const modal = overlay.create(WaitlistModal)
+const runtimeConfig = useRuntimeConfig()
+const appUrl = computed(() => String(runtimeConfig.public.librooAppUrl || 'https://app.libroo.app').replace(/\/$/, ''))
 
-const handleClick = (link: { label: string }) => {
-  if (link.label === 'Notify Me') {
-    modal.open({
-      title: page.value?.waitlistModal.title ?? '',
-      description: page.value?.waitlistModal.description ?? ''
-    })
+type PageLink = {
+  label: string
+  appPath?: string
+  to?: string
+}
+
+const resolveAppLink = <T extends PageLink>(link: T) => {
+  const { appPath, ...buttonLink } = link
+
+  if (!appPath) {
+    return buttonLink
   }
-  proxy.track('hero', { name: String(link.label) })
+
+  return {
+    ...buttonLink,
+    to: `${appUrl.value}${appPath.startsWith('/') ? appPath : `/${appPath}`}`
+  }
+}
+
+const heroLinks = computed(() => page.value?.hero?.links?.map(resolveAppLink) ?? [])
+const ctaLinks = computed(() => page.value?.cta?.links?.map(resolveAppLink) ?? [])
+
+const handleClick = (link: { label: string }, source: 'hero' | 'cta') => {
+  proxy.track('cta_click', {
+    source,
+    label: String(link.label)
+  })
 }
 </script>
 
@@ -43,15 +60,29 @@ const handleClick = (link: { label: string }) => {
       <UColorModeImage
         light="/images/light/line-1.svg"
         dark="/images/dark/line-1.svg"
-        class="absolute pointer-events-none pb-10 left-0 top-0 object-cover h-162.5"
+        class="absolute pointer-events-none pb-10 left-0 top-12 object-cover h-162.5"
       />
     </div>
 
     <UPageHero
       :description="page.description"
-      :links="page.hero.links"
+      :links="heroLinks"
       :ui="{ container: 'md:pt-18 lg:pt-20' }"
     >
+      <template
+        v-if="page.hero.badge"
+        #headline
+      >
+        <UBadge
+          :icon="page.hero.badge.icon"
+          color="neutral"
+          variant="subtle"
+          size="lg"
+        >
+          {{ page.hero.badge.label }}
+        </UBadge>
+      </template>
+
       <template #title>
         <MDC
           :value="page.title"
@@ -61,10 +92,10 @@ const handleClick = (link: { label: string }) => {
 
       <template #links>
         <UButton
-          v-for="(link, index) in page.hero.links"
+          v-for="(link, index) in heroLinks"
           :key="index"
           v-bind="link"
-          @click="handleClick(link)"
+          @click="handleClick(link, 'hero')"
         />
       </template>
     </UPageHero>
@@ -130,7 +161,9 @@ const handleClick = (link: { label: string }) => {
 
     <UPageCTA
       id="notify"
-      v-bind="page.cta"
+      :title="page.cta.title"
+      :description="page.cta.description"
+      :links="ctaLinks"
       variant="naked"
       class="overflow-hidden @container"
     >
@@ -151,12 +184,24 @@ const handleClick = (link: { label: string }) => {
         </div>
       </template>
 
+      <template #description>
+        <div class="space-y-3">
+          <p>{{ page.cta.description }}</p>
+          <p
+            v-if="page.cta.note"
+            class="text-sm text-muted"
+          >
+            {{ page.cta.note }}
+          </p>
+        </div>
+      </template>
+
       <template #links>
         <UButton
-          v-for="(link, index) in page.cta.links"
+          v-for="(link, index) in ctaLinks"
           :key="index"
           v-bind="link"
-          @click="handleClick(link)"
+          @click="handleClick(link, 'cta')"
         />
       </template>
 
