@@ -62,6 +62,7 @@ pnpm wrangler d1 create libroo-website
 - `NUXT_PUBLIC_SCRIPTS_UMAMI_ANALYTICS_WEBSITE_ID` (optional)
 - `NUXT_LEGAL_IMPRINT_REDIRECT_URL` or `NUXT_LEGAL_IMPRINT_MARKDOWN_URL` (optional)
 - `NUXT_LEGAL_PRIVACY_REDIRECT_URL` or `NUXT_LEGAL_PRIVACY_MARKDOWN_URL` (optional)
+- `NUXT_LEGAL_TERMS_REDIRECT_URL` or `NUXT_LEGAL_TERMS_MARKDOWN_URL` (optional)
 - `NUXT_LEGAL_CLIENT_PLACEHOLDERS_URL` (optional)
 
 1. Workflows.
@@ -93,12 +94,12 @@ For local `pnpm dev`, the app applies Drizzle migrations for the local sqlite fa
 
 ## Legal Pages
 
-The `/imprint` and `/privacy` routes are intentionally configurable and do not ship legal copy in this repository.
+The `/imprint`, `/privacy`, and `/terms` routes are intentionally configurable and do not ship legal copy in this repository.
 
 Each page supports two modes:
 
-- Set `NUXT_LEGAL_IMPRINT_REDIRECT_URL` or `NUXT_LEGAL_PRIVACY_REDIRECT_URL` to redirect visitors to an external legal page.
-- Set `NUXT_LEGAL_IMPRINT_MARKDOWN_URL` or `NUXT_LEGAL_PRIVACY_MARKDOWN_URL` to fetch and render markdown from an HTTPS URL.
+- Set `NUXT_LEGAL_IMPRINT_REDIRECT_URL`, `NUXT_LEGAL_PRIVACY_REDIRECT_URL`, or `NUXT_LEGAL_TERMS_REDIRECT_URL` to redirect visitors to an external legal page.
+- Set `NUXT_LEGAL_IMPRINT_MARKDOWN_URL`, `NUXT_LEGAL_PRIVACY_MARKDOWN_URL`, or `NUXT_LEGAL_TERMS_MARKDOWN_URL` to fetch and render markdown from an HTTPS URL.
 
 Redirect URLs take precedence over markdown URLs. If neither variable is set, the route renders a neutral unconfigured message.
 

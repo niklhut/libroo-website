@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type LegalPageKind = 'imprint' | 'privacy'
+type LegalPageKind = 'imprint' | 'privacy' | 'terms'
 type LegalPlaceholderMap = Record<string, string>
 
 interface LegalMarkdownBody extends Record<string, unknown> {

@@ -1,4 +1,4 @@
-type LegalPage = 'imprint' | 'privacy'
+type LegalPage = 'imprint' | 'privacy' | 'terms'
 
 interface LegalPageConfig {
   redirectUrl?: string
@@ -7,14 +7,15 @@ interface LegalPageConfig {
 
 const labels: Record<LegalPage, string> = {
   imprint: 'Imprint',
-  privacy: 'Privacy Policy'
+  privacy: 'Privacy Policy',
+  terms: 'Terms of Service'
 }
 
 const hasPlaceholderPattern = /\{\{\s*[A-Z0-9_]+\s*\}\}/
 const placeholderPattern = /\{\{\s*([A-Z0-9_]+)\s*\}\}/g
 
 function isLegalPage(value: string | undefined): value is LegalPage {
-  return value === 'imprint' || value === 'privacy'
+  return value === 'imprint' || value === 'privacy' || value === 'terms'
 }
 
 export default defineEventHandler(async (event) => {
