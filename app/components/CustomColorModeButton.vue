@@ -18,6 +18,10 @@ const isDark = computed({
     }
   }
 })
+
+function toggleColorMode() {
+  isDark.value = !isDark.value
+}
 </script>
 
 <template>
@@ -27,7 +31,7 @@ const isDark = computed({
       variant="link"
       :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
       aria-label="Toggle color mode"
-      @click.stop="isDark = !isDark"
+      @click.stop="toggleColorMode"
     />
     <template #fallback>
       <slot name="fallback">
