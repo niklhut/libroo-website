@@ -5,9 +5,21 @@
   "lockFileMaintenance": {
     "enabled": true
   },
-  "packageRules": [{
-    "matchDepTypes": ["resolutions"],
-    "enabled": false
-  }],
+  "packageRules": [
+    {
+      "matchDepTypes": ["resolutions"],
+      "enabled": false
+    },
+    {
+      "description": "Lock file maintenance has no single release timestamp, so minimumReleaseAge can leave its status check pending forever.",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "minimumReleaseAge": null
+    },
+    {
+      "description": "Initial digest pinning has no release timestamp to age-gate; keep minimumReleaseAge for later version updates.",
+      "matchUpdateTypes": ["pin", "pinDigest"],
+      "minimumReleaseAge": null
+    }
+  ],
   "postUpdateOptions": ["pnpmDedupe"]
 }
