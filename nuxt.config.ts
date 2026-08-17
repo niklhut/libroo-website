@@ -142,7 +142,7 @@ export default defineNuxtConfig({
     '/api/legal/**': { prerender: false }
   },
 
-  compatibilityDate: '2025-03-13',
+  compatibilityDate: '2026-08-17',
 
   nitro: {
     preset: 'cloudflare-module',
@@ -152,6 +152,7 @@ export default defineNuxtConfig({
       wrangler: {
         name: workerName,
         preview_urls: true,
+        compatibility_flags: ['nodejs_compat'],
         routes: productionRoutes,
         d1_databases: [
           {
