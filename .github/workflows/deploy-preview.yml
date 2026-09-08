@@ -83,7 +83,7 @@ jobs:
           DB_NAME="${{ steps.names.outputs.db_name }}"
           echo "Ensuring D1 database exists: $DB_NAME"
           set +e
-          CREATE_OUTPUT=$(pnpm dlx wrangler@4 d1 create "$DB_NAME" 2>&1)
+          CREATE_OUTPUT=$(pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 d1 create "$DB_NAME" 2>&1)
           CREATE_EXIT=$?
           set -e
           echo "$CREATE_OUTPUT"
@@ -102,7 +102,7 @@ jobs:
           DB_ID=""
 
           while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
-            if pnpm dlx wrangler@4 d1 info "$DB_NAME" --json > d1-info.json; then
+            if pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 d1 info "$DB_NAME" --json > d1-info.json; then
               DB_ID=$(node -e "const fs=require('fs'); const d=JSON.parse(fs.readFileSync('d1-info.json', 'utf8')); process.stdout.write(d.uuid || d.database_id || d.id || '')")
               if [ -n "$DB_ID" ]; then
                 break
@@ -138,7 +138,7 @@ jobs:
           CLOUDFLARE_WORKER_NAME: ${{ steps.names.outputs.worker_name }}
           NUXT_SITE_URL: ${{ steps.names.outputs.site_url }}
           CF_DEPLOY_ENV: preview
-        run: pnpm dlx wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
+        run: pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
 
       - name: Sync preview runtime secrets
         env:
@@ -153,7 +153,7 @@ jobs:
           fi
 
           printf '%s' "$SECRET_VAL" \
-            | pnpm dlx wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
+            | pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Deploy preview Worker
         id: deploy
@@ -173,7 +173,7 @@ jobs:
 
           WORKER_NAME="${{ steps.names.outputs.worker_name }}"
 
-          pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "$WORKER_NAME"
+          pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 deploy --config .output/server/wrangler.json --name "$WORKER_NAME"
 
           PREVIEW_URL="https://${WORKER_NAME}.${ACCOUNT_SUBDOMAIN}.workers.dev"
           echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
