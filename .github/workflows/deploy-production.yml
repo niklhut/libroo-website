@@ -56,7 +56,7 @@ jobs:
         run: pnpm build
 
       - name: Apply production D1 migrations
-        run: pnpm dlx wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
+        run: pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 d1 migrations apply DB --remote --config .output/server/wrangler.json
 
       - name: Sync production runtime secrets
         run: |
@@ -68,10 +68,10 @@ jobs:
           fi
 
           printf '%s' "$SECRET_VAL" \
-            | pnpm dlx wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
+            | pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 secret put NUXT_TURNSTILE_SECRET_KEY --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Deploy production Worker
-        run: pnpm dlx wrangler@4 deploy --config .output/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME"
+        run: pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 deploy --config .output/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME"
 
       - name: Verify production deployment
         run: |

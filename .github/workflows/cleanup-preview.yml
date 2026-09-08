@@ -39,12 +39,12 @@ jobs:
           DB_NAME="libroo-preview-pr-${PR_NUMBER}"
 
           set +e
-          D1_INFO_OUTPUT="$(pnpm dlx wrangler@4 d1 info "$DB_NAME" --json 2>&1)"
+          D1_INFO_OUTPUT="$(pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 d1 info "$DB_NAME" --json 2>&1)"
           D1_INFO_STATUS=$?
           set -e
 
           if [ "$D1_INFO_STATUS" -eq 0 ]; then
-            pnpm dlx wrangler@4 d1 delete "$DB_NAME" --skip-confirmation
+            pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 d1 delete "$DB_NAME" --skip-confirmation
           else
             NORMALIZED_INFO="$(printf '%s' "$D1_INFO_OUTPUT" | tr '[:upper:]' '[:lower:]')"
             COMPACT_INFO="$(printf '%s' "$D1_INFO_OUTPUT" | tr -d '[:space:]')"
@@ -66,4 +66,4 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           WORKER_NAME="libroo-preview-pr-${PR_NUMBER}"
 
-          pnpm dlx wrangler@4 delete "$WORKER_NAME" --force || true
+          pnpm dlx --allow-build=esbuild --allow-build=workerd wrangler@4 delete "$WORKER_NAME" --force || true
