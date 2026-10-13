@@ -10,4 +10,4 @@ allowBuilds:
 minimumReleaseAge: 1500
 
 overrides:
-  h3: 1.15.11
+  h3: 2.0.2
